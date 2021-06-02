@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员主界面</title>
+</head>
+<body>
+
+<!--<a th:href="@{${information}(employeeId=${employee.getId()})}">个人信息</a>-->
+<p>管理员主界面</p>
+
+<!--
+  产品界面---产品的增删改查
+    员工的管理---员工角色的分配-员工的增加删除
+    订单的查看---申请单-审批单-配送单
+    个人信息--
+-->
+
+<a th:href="${dirproduct}">产品管理页面</a>
+<a th:href="${diremployee}">员工管理页面</a>
+<a th:href="${dirorder}">订单管理页面</a>
+<a th:href="${dirinformation}">个人信息页面</a><br>
+
+失败
+失败
+失败
+失败失败
+
+
+<!--产品的
+增--增加产品
+删--删除产品
+改--修改原料
+查--查询
+-->
+
+
+
+</body>
+</html>

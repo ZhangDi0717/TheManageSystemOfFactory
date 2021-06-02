@@ -1,0 +1,194 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main" align="center">
+        <form class="layui-form" action="">
+                <!--            用户名-->
+                <div class="layui-form-item">
+                    <!--                label-->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="username" required lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" disabled id="username">
+                        </div>
+                    </div>
+                    <!--                select-->
+                </div>
+                <!--            姓名-->
+                <div class="layui-form-item">
+                    <!--                label-->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">姓名</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="name" required lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input" id="name">
+                        </div>
+                    </div>
+                    <!--                select-->
+                </div>
+                <!--            部门 -- 职位  -->
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">部门</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="apartment" placeholder="部门" autocomplete="off" class="layui-input" id="apartment">
+                    </div>
+                    <label class="layui-form-label">职位</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="zhiwei" placeholder="职位" autocomplete="off" class="layui-input" id="zhiwei" disabled>
+                    </div>
+                </div>
+
+            </div>
+                <!--            性别-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="sex" value="0" title="男" id="nan">
+                            <input type="radio" name="sex" value="1" title="女" id="nv">
+                        </div>
+                    </div>
+                </div>
+                <!--            电话-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">电话</label>
+                        <div class="layui-input-inline" style="width: 200px;">
+                            <input type="text" name="phone" placeholder="请输入电话号码" autocomplete="off" class="layui-input" id="phone">
+                        </div>
+                    </div>
+                </div>
+
+<!--            邮箱-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-inline" style="width: 200px;">
+                            <input type="text" name="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" id="email">
+                        </div>
+                    </div>
+                </div>
+
+            <!--            地址-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">地址</label>
+                        <div class="layui-input-inline" style="width: 200px;">
+                            <input type="text" name="address" placeholder="请输入居住地址" autocomplete="off" class="layui-input" id="address">
+                        </div>
+                    </div>
+                </div>
+                <!--            {"msg":"个人信息请求成功","address":null,"code":200,"phone":null,"sex":null,"name":"原料申请员","email":null}-->
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit  lay-filter="saveinformation">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+    </div>
+</div>
+<script>
+    layui.use(['form','miniPage'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            miniPage = layui.miniPage;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        //监听提交
+        form.on('submit(saveinformation)', function (data) {
+
+            // 向后台请求数据
+            $.ajax({
+                url:"apply/changeinformation",
+                type:'post',
+                data: JSON.stringify(data.field),
+                contentType : "application/json",
+                beforeSend:function () {
+                    this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                },
+                success:function(data){
+                    if(data.code == 400){//失败
+                        //alert("失败")
+                        layer.msg(data.msg, {
+                            icon: 5,//失败的表情
+                            time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                        });
+                        return;
+                    }else{
+                        layer.msg(data.msg, {//成功
+                            icon: 6,//成功的表情
+                            time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                        });
+                        //关闭页面
+                        miniPage.hashHome();
+                    }
+                },
+                complete: function () {
+                    layer.close(this.layerIndex);
+                },
+            });
+
+
+            var index = layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            }, function () {
+                layer.close(index);
+                 miniPage.hashHome();
+            });
+            return false;
+        });
+
+        //为用户名赋值
+        $("#username").val($("#001")[0].innerText);
+
+        //请求个人信息
+        $.ajax({
+            url:"apply/information?username="+$("#001")[0].innerText,
+            type:'post',
+            contentType : "application/json",
+            beforeSend:function () {
+                this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+            },
+            success:function(data){
+                if(data.code == 400){//失败
+                    //alert("失败")
+                    layer.msg("保存失败", {
+                        icon: 5,//失败的表情
+                        time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                    });
+                    return;
+                }else{
+                //,"address":null,"code":200,"phone":null,"sex":0,"name":"原料申请员","position":"生产部门","email":null}
+                    //赋值姓名
+                    $("#name").val(data.name);
+
+                    $("#zhiwei").val(data.position);
+                    //赋值性别
+                    var radio = document.getElementsByName("sex");
+                    for (var i = 0; i < radio.length; i++) {
+                        if(data.sex == radio[i].value){
+                            console.log($(radio[i]).next())
+                            $(radio[i]).next().click();
+                        }
+                    }
+                    //赋值电话
+                    $("#phone").val(data.phone);
+                    //赋值邮箱
+                    $("#email").val(data.email);
+                    //赋值地址
+                    $("#address").val(data.address);
+                }
+            },
+            complete: function () {
+                layer.close(this.layerIndex);
+            },
+        });
+
+    });
+</script>

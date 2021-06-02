@@ -1,0 +1,229 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main" align="center">
+
+
+        <form class="layui-form" action="">
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料1</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="zhuliao0" class="zhuliao" required lay-verify="required" >
+                            <option value="" th:each="mainIngredient:${mainIngredients}" th:value="${mainIngredient.getId()}" th:text="${mainIngredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="zhuliao0number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <!-- 示例-970 -->
+        <!--        <ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px" data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>-->
+
+    </div>
+</div>
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        //日期
+        laydate.render({
+            elem: '#date'
+        });
+        laydate.render({
+            elem: '#date1'
+        });
+
+        // //监听保存
+        // form.on('submit(save)', function (data) {
+        //     // layer.alert(JSON.stringify(data.field), {
+        //     //     title: '最终的提交信息'
+        //     // })
+        //
+        //     $.ajax({
+        //         url:"applying",
+        //         type:'post',
+        //         data:JSON.stringify(data.field),
+        //         contentType : "application/json",
+        //         beforeSend:function () {
+        //             this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+        //         },
+        //         success:function(data){
+        //             if(data.code == 400){//失败
+        //                 //alert("失败")
+        //                 layer.msg("保存失败", {
+        //                     icon: 5,//失败的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //                 return;
+        //             }else{
+        //                 layer.msg("保存成功", {//成功
+        //                     icon: 6,//成功的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //                 // console.log(data.msg);
+        //                 $("#requisitionid").val(data.msg);
+        //             }
+        //         },
+        //         complete: function () {
+        //             layer.close(this.layerIndex);
+        //         },
+        //     });
+        //
+        //     return false;
+        // });
+
+        // //监听提交
+        // form.on('submit(submit)', function (data) {
+        //     // layer.alert(JSON.stringify(data.field), {
+        //     //     title: '最终的提交信息'
+        //     // })
+        //
+        //     $.ajax({
+        //         url:"applied",
+        //         type:'post',
+        //         data:JSON.stringify(data.field),
+        //         contentType : "application/json",
+        //         beforeSend:function () {
+        //             this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+        //         },
+        //         success:function(data){
+        //             if(data.code == 400){//失败
+        //                 layer.msg("保存失败", {
+        //                     icon: 5,//失败的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //                 return;
+        //             }else{
+        //                 layer.msg("保存成功", {//成功
+        //                     icon: 6,//成功的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //
+        //             }
+        //         },
+        //         complete: function () {
+        //             layer.close(this.layerIndex);
+        //         },
+        //     });
+        //
+        //     return false;
+        // });
+
+        //获取主料信息
+        // var $ = layui.jquery;
+        // $.ajax({
+        //     url:"applying/getMainIngredient",
+        //     type:'post',
+        //     // data:{openid:openid},
+        //     beforeSend:function () {
+        //         this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+        //     },
+        //     success:function(data){
+        //         if(data.code == 0){
+        //             layer.msg(data.msg, {
+        //                 icon: 5,//失败的表情
+        //                 time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //             });
+        //             return;
+        //         }else{
+        //             // layer.msg(data.msg, {
+        //             //     icon: 6,//成功的表情
+        //             //     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //             // });
+        //
+        //             if(data.data.length>0){
+        //                 // $("#zhuliao1").empty();//生成前先清空之前存在的数据
+        //
+        //                 $.each(data.data, function(index, item) {
+        //                     $('.zhuliao')
+        //                         .append(new Option(item.name, item.id));
+        //                 });
+        //                 layui.form.render("select");
+        //             }
+        //
+        //         }
+        //     },
+        //     complete: function () {
+        //         layer.close(this.layerIndex);
+        //     },
+        // });
+        //
+        //
+        // //获取辅料
+        // $.ajax({
+        //     url:"applying/getIngredient",
+        //     type:'post',
+        //     // data:{openid:openid},
+        //     beforeSend:function () {
+        //         this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+        //     },
+        //     success:function(data){
+        //         console.log("ingredient: ")
+        //         console.log(data)
+        //         if(data.code == 0){//失败
+        //             layer.msg(data.msg, {
+        //                 icon: 5,//失败的表情
+        //                 time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //             });
+        //             return;
+        //         }else{
+        //
+        //             // layer.msg(data.msg, {//成功
+        //             //     icon: 6,//成功的表情
+        //             //     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //             // });
+        //             //处理下拉表格
+        //             if(data.data.length>0){
+        //                 // $("#zhuliao1").empty();//生成前先清空之前存在的数据
+        //
+        //                 $.each(data.data, function(index, item) {
+        //                     $('.fuliao')
+        //                         .append(new Option(item.name, item.id));
+        //                 });
+        //                 layui.form.render("select");
+        //             }
+        //
+        //         }
+        //     },
+        //     complete: function () {
+        //         layer.close(this.layerIndex);
+        //     },
+        // });
+
+        // //为用户名赋值
+        // $("#username").val($("#001")[0].innerText);
+
+        // //无登陆测试
+        // $("#username").val("zhangsan");
+
+
+        //test
+
+        // alert("已加载applying");
+        // // alert($("#001").innerText);
+        //
+        // console.log($("#001")[0].innerText)
+        //
+        // alert($("#requisitionid").val());
+
+
+    });
+</script>

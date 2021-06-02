@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>产品生产检测界面</title>
+</head>
+
+<script type="text/javascript" th:src="@{/js/jquery-3.5.1.js}"></script>
+
+<script type="text/javascript">
+    $(function (){
+        //定义周期访问函数：setInterval
+        setInterval(function () {
+            getData();
+        },1000);
+
+        //定义周期执行函数
+        function getData(){
+            const tem_id = $("#id").val();
+            //ajax,解析json
+            $.ajax({
+                type : "get",
+                url :"getsensordata1",
+                data : {
+                    "tem_id" : "1",
+                    "humidity_id" : "2"
+                },
+                dataType : "json",
+                success : function (data){
+                    // "humiditySensor_value","humiditySensor_uint","temSensor_id","humiditySensor_time","temSensor_name","temSensor_time",
+                    // "humiditySensor_name","humiditySensor_id,"temSensor_uint","temSensor_value":20.0}
+                    $("#tem_name").text(data.temSensor_name);
+                    $("#tem_value").text(data.temSensor_value);
+                    $("#tem_uint").text(data.temSensor_uint);
+                    $("#tem_time").text(new Date(data.temSensor_time));
+
+                    $("#humidity_name").text(data.humiditySensor_name);
+                    $("#humidity_value").text(data.humiditySensor_value);
+                    $("#humidity_uint").text(data.humiditySensor_uint);
+                    $("#humidity_time").text(new Date(data.humiditySensor_time));
+
+
+                },
+
+                contentType : "application/json",
+                error : function (){
+                    alert("从服务器获取数据失败")
+                }
+            })
+        }
+
+        //加载tem div
+
+
+    })
+</script>
+
+<body>
+    <center><p>产品检测界面</p></center>
+    <div id="1">
+        传感器：<span id="tem_name" ></span><br>
+        测量值：<span id="tem_value"></span><br>
+        单位： <span id="tem_uint"></span><br>
+        测量日期：<span id="tem_time"></span><br>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div id="2">
+        传感器：<span id="humidity_name" ></span><br>
+        测量值：<span id="humidity_value"></span><br>
+        单位： <span id="humidity_uint"></span><br>
+        测量日期：<span id="humidity_time"></span><br>
+    </div>
+
+</body>
+</html>

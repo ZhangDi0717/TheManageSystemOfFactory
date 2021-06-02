@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>申请界面</title>
+
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="application/test1"  media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+
+    <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
+
+    <script type="text/javascript">
+        $(function(){
+            //添加原料
+            $("#submit").click(function () {
+
+                $.ajax({
+                    type : "post",
+                    url :"application/save",
+                    data : JSON.stringify({
+                        "userid"                :  "2",
+                        "rawmaterial1"           : $("#11").val(),
+                        "rawmaterial1_number"   : $("#rawmaterial1_number").val(),
+                        "rawmaterial2"           : $("#12").val(),
+                        "rawmaterial2_number"   : $("#rawmaterial2_number").val(),
+                        "rawmaterial3"           : $("#13").val(),
+                        "rawmaterial3_number"   : $("#rawmaterial3_number").val(),
+                        "ingredient1"           : $("#21").val(),
+                        "ingredient1_number"   : $("#ingredient1_number").val(),
+                        "ingredient2"           : $("#22").val(),
+                        "ingredient2_number"   : $("#ingredient2_number").val(),
+                        "ingredient3"           : $("#23").val(),
+                        "ingredient3_number"   : $("#ingredient3_number").val()
+                    }),
+                    dataType : "text",
+                    success : function (data){
+                        alert("保存成功")
+                    },
+
+                    contentType : "application/json",
+                    error : function (){
+                        alert("保存失败")
+                    }
+                })
+            })
+        })
+    </script>
+
+</head>
+<body>
+
+
+
+    <iframe src="application/test1" frameborder="0" id="demoAdmin" style="width: 100%; height: 300px; border-radius: 2px;"></iframe>
+
+
+    <script src="application/test1" charset="utf-8"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+    <script>
+    </script>
+
+<!--    <center>-->
+<!--        <p>申请界面</p>-->
+<!--    </center>-->
+
+<!--<div>-->
+<!--    申请人Id:<span id="userid" th:text="${employee.getId()}"></span><br>-->
+<!--    声请人用户名：<span th:text="${employee.getUsername()}"></span><br>-->
+<!--</div>-->
+
+
+<!--<div>-->
+<!--    <form action="/test" method="get">-->
+<!--        <span>选择所需的原料：</span>-->
+<!--        <select id="11" name="rawmateria1"><option th:each="material:${rawMaterial}" th:value="${material.getName()}" th:text="${material.getName()}"></option></select>-->
+<!--        <span>选择所需要的数量：</span>-->
+<!--        <input id="rawmaterial1_number" type="text"><br>-->
+
+<!--        <span>选择所需的原料：</span>-->
+<!--        <select id="12" name="rawmateria2"><option th:each="material:${rawMaterial}" th:value="${material.getName()}" th:text="${material.getName()}"></option>></select>-->
+<!--        <span>选择所需要的数量：</span>-->
+<!--        <input id="rawmaterial2_number" type="text"><br>-->
+
+<!--        <span>选择所需的原料：</span>-->
+<!--        <select id="13"  name="rawmateria3" ><option th:each="material:${rawMaterial}" th:value="${material.getName()}" th:text="${material.getName()}"></option>></select>-->
+<!--        <span>选择所需要的数量：</span>-->
+<!--        <input id="rawmaterial3_number" type="text"><br>-->
+
+<!--        <br>-->
+<!--        <br>-->
+<!--        <br>-->
+
+<!--        <span>选择所需的辅料：</span>-->
+<!--        <select id="21" name="ingredient1"><option th:each="ingredient:${ingredients}" th:value="${ingredient.getName()}" th:text="${ingredient.getName()}"></option></select>-->
+<!--        <span>选择所需要的数量：</span>-->
+<!--        <input id="ingredient1_number" type="text"><br>-->
+
+<!--        <span>选择所需的辅料：</span>-->
+<!--        <select id="22" name="ingredient2"><option th:each="ingredient:${ingredients}" th:value="${ingredient.getName()}" th:text="${ingredient.getName()}"></option></select>-->
+<!--        <span>选择所需要的数量：</span>-->
+<!--        <input id="ingredient2_number" type="text"><br>-->
+
+<!--        <span>选择所需的辅料：</span>-->
+<!--        <select id="23" name="ingredient3"><option th:each="ingredient:${ingredients}" th:value="${ingredient.getName()}" th:text="${ingredient.getName()}"></option></select>-->
+<!--        <span>选择所需要的数量：</span>-->
+<!--        <input id="ingredient3_number" type="text"><br>-->
+
+
+<!--        <input id="submit" type="button" value="提交" >-->
+<!--    </form>-->
+<!--    <br>-->
+<!--    <br>-->
+<!--    <br>-->
+<!--    <br>-->
+<!--    <br>-->
+<!--</div>-->
+
+</body>
+</html>

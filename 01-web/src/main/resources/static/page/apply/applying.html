@@ -1,0 +1,336 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main" align="center">
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>申请生产原料</legend>
+        </fieldset>
+
+        <form class="layui-form" action="">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="username" id="username" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="requisitionid" id="requisitionid" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="state" id="state" autocomplete="off" class="layui-input" th:value="${state}">
+                    </div>
+                </div>
+            </div>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>主料选择</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+<!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料1</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="zhuliao0" class="yuanliao" required lay-verify="required" id="select01">
+                            <option value=""></option>
+                            <option value="" th:each="mainIngredient:${mainIngredients}" th:value="${mainIngredient.getId()}" th:text="${mainIngredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+<!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="zhuliao0number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number01">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料2</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="zhuliao1" class="yuanliao" required lay-verify="required" id="select02">
+                            <option value=""></option>
+                            <option value="" th:each="mainIngredient:${mainIngredients}" th:value="${mainIngredient.getId()}" th:text="${mainIngredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="zhuliao1number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number02">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料3</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="zhuliao2" class="yuanliao" required lay-verify="required" id="select03">
+                            <option value=""></option>
+                            <option value="" th:each="mainIngredient:${mainIngredients}" th:value="${mainIngredient.getId()}" th:text="${mainIngredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="zhuliao2number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number03">
+                    </div>
+                </div>
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>辅料选择</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料1</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="fuliao0" class="yuanliao" required lay-verify="required" id="select11">
+                            <option value=""></option>
+                            <option value="" th:each="ingredient:${ingredients}" th:value="${ingredient.getId()}" th:text="${ingredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="fuliao0number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number11">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料2</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="fuliao1" class="yuanliao" required lay-verify="required" id="select12">
+                            <option value=""></option>
+                            <option value="" th:each="ingredient:${ingredients}" th:value="${ingredient.getId()}" th:text="${ingredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number"  name="fuliao1number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number12">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料3</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="fuliao2" class="yuanliao" required lay-verify="required" id="select13">
+                            <option value=""></option>
+                            <option value="" th:each="ingredient:${ingredients}" th:value="${ingredient.getId()}" th:text="${ingredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="fuliao2number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number13">
+                    </div>
+                </div>
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>生产日期</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">生产日期</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text"  class="layui-input" id="dateline" name="dateline">
+                    </div>
+
+                </div>
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend></legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn tijiao" lay-submit  lay-filter="save">保存</button>
+                    <button class="layui-btn tijiao" lay-submit  lay-filter="saveBtn">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- 示例-970 -->
+<!--        <ins class="adsbygoogle" style="display:inline-block;width:970px;height:90px" data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>-->
+
+</div>
+</div>
+
+
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate
+            , $ = layui.jquery;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#dateline' //指定元素
+            ,format: 'yyyy-MM-dd' //可任意组合
+        });
+
+        //监听保存
+        // form.on('submit(save)', function (data) {
+        //
+        //     alert("我被点击了")
+        //     $.ajax({
+        //         url:"applying/save",
+        //         type:'post',
+        //         data:JSON.stringify(data.field),
+        //         contentType : "application/json",
+        //         beforeSend:function () {
+        //             this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+        //         },
+        //         success:function(data){
+        //             if(data.code == 400){//失败
+        //                 //alert("失败")
+        //                 layer.msg("保存失败", {
+        //                     icon: 5,//失败的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //                 return;
+        //             }else{
+        //                 layer.msg("保存成功", {//成功
+        //                     icon: 6,//成功的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //                 // console.log(data.msg);
+        //                 $("#requisitionid").val(data.msg);
+        //             }
+        //         },
+        //         complete: function () {
+        //             layer.close(this.layerIndex);
+        //         },
+        //     });
+        //
+        //     return false;
+        // });
+
+
+        //监听提交
+        // form.on('submit(saveBtn)', function (data) {
+        //     alert("Inside")
+        //     $.ajax({
+        //         url:"applying/submit",
+        //         type:'post',
+        //         data:JSON.stringify(data.field),
+        //         contentType : "application/json",
+        //         beforeSend:function () {
+        //             this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+        //         },
+        //         success:function(data){
+        //             if(data.code == 400){//失败
+        //                 layer.msg("提交失败", {
+        //                     icon: 5,//失败的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //                 return;
+        //             }else{
+        //                 layer.msg("提交成功", {//成功
+        //                     icon: 6,//成功的表情
+        //                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
+        //                 });
+        //
+        //                 //锁死表单选项
+        //                 $('.yuanliao').attr('disabled', 'disabled');
+        //                 $('.number').attr('disabled', 'disabled');
+        //                 $('#dateline').attr('disabled', 'disabled');
+        //                 $('.tijiao').attr('disabled', 'disabled');
+        //
+        //                 form.render('select');
+        //             }
+        //         },
+        //         error:function (data) {
+        //             alert("提交失败")
+        //         },
+        //         complete: function () {
+        //             layer.close(this.layerIndex);
+        //         },
+        //     });
+        //
+        //     return false;
+        // });
+
+        //为用户名赋值
+        $("#username").val($("#001")[0].innerText);
+
+        if( $("#state")[0].defaultValue == 0 ){
+        } else if( $("#state")[0].defaultValue == 1 ){
+            //edit
+            //申请单号；申请人;生产日期
+            $("#requisitionid").val([[${requisitionId}]]);
+            // $("#username").val([[${username}]]);
+            $("#dateline").val([[${#dates.format(dateline,'yyyy-MM-dd')}]]);
+
+
+            //主料id; 数量
+            var select01 = 'dd[lay-value=' + [[${mainIngredient0id}]] + ']';
+            $('#select01').siblings("div.layui-form-select").find('dl').find(select01).click();
+            $("#number01").val([[${mainIngredient0number}]]);
+
+            var select02 = 'dd[lay-value=' + [[${mainIngredient1id}]] + ']';
+            $('#select02').siblings("div.layui-form-select").find('dl').find(select02).click();
+            $("#number02").val([[${mainIngredient1number}]]);
+
+            var select03 = 'dd[lay-value=' + [[${mainIngredient2id}]] + ']';
+            $('#select03').siblings("div.layui-form-select").find('dl').find(select03).click();
+            $("#number03").val([[${mainIngredient2number}]]);
+
+            //辅料id; 数量
+            var select11 = 'dd[lay-value=' + [[${ingredient0id}]] + ']';
+            $('#select11').siblings("div.layui-form-select").find('dl').find(select11).click();
+            $("#number11").val([[${ingredient0number}]]);
+
+            var select12 = 'dd[lay-value=' + [[${ingredient1id}]] + ']';
+            $('#select12').siblings("div.layui-form-select").find('dl').find(select12).click();
+            $("#number12").val([[${ingredient1number}]]);
+
+
+            var select13 = 'dd[lay-value=' + [[${ingredient2id}]] + ']';
+            $('#select13').siblings("div.layui-form-select").find('dl').find(select13).click();
+            $("#number13").val([[${ingredient2number}]]);
+
+
+        }
+
+
+    });
+</script>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员个人信息</title>
+</head>
+<body>
+
+<script type="text/javascript" th:src="@{/js/jquery-3.5.1.js}"></script>
+
+<script type="text/javascript">
+    $(function (){
+        $("#alterinformation").click(function(){
+
+            const datas = {
+                "employeeId": $("#employeeId").val(),
+                "name": $("#name").val(),
+                "sex": $("#sex").val(),
+                "address": $("#address").val(),
+                "phone": $("#phone").val(),
+                "email": $("#email").val(),
+            };
+
+
+            //ajax,解析json
+            $.ajax({
+                type : "get",
+                url : "alterinformation",
+                data : datas,
+                dataType : "json",
+                success : function (data){
+                      alert("保存成功")
+                    },
+
+                contentType : "application/json",
+                error : function (){
+                        alert("保存失败")
+                    }
+                })
+
+        })
+
+
+        //修改密码
+        $("#alterpassword").click(function(){
+
+            const datas = {
+                "employeeId": $("#employeeId").val(),
+                "password": $("#password").val(),
+            };
+
+
+            //ajax,解析json
+            $.ajax({
+                type : "get",
+                url : "alterpassword",
+                data : datas,
+                dataType : "json",
+                success : function (data){
+                    alert("修改成功")
+                },
+
+                contentType : "application/json",
+                error : function (){
+                    alert("修改失败")
+                }
+            })
+
+        })
+
+    })
+
+
+</script>
+
+<p>管理员个人信息</p>
+</body>
+
+<span id="information" th:value="${alterdir}"></span>
+<div>
+    <form th:action="${alterdir}" th:method="get">
+
+        姓名: <input type="text" id="name" name="name" th:value="${employee_informatioon.getName()}"><br>
+        性别: <input type="text" id="sex" name="sex" th:value="${employee_informatioon.getSex()}"><br>
+        地址：<input type="text" id="address" name="address" th:value="${employee_informatioon.getAddress()}"><br>
+        手机：<input type="text" id="phone" name="phone" th:value="${employee_informatioon.getPhone()}"><br>
+        邮箱：<input type="text" id="email" name="email" th:value="${employee_informatioon.getEmail()}"><br>
+        <input type="button" id="alterinformation" value="修改"><br>
+
+    </form>
+</div>
+
+
+<br>
+<br>
+<br>
+<br>
+
+<div>
+    <form th:action="${alterpasswpoddir}" th:method="get">
+        <input type="text" id="employeeId" name="employeeId" disabled="true" th:value="${employee.getId()}"><br>
+        用户名：<input type="text" id="username" name="username" disabled="true" th:value="${employee.getUsername()}"><br>
+        密码：<input type="text" id="password" name="password" th:value="${employee.getPassword()}"><br>
+        <input type="button" id="alterpassword" value="修改"><br>
+
+    </form>
+</div>
+
+
+
+
+</html>

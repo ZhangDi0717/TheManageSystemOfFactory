@@ -1,0 +1,636 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset" hidden="hidden" id="searchBurId">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">申请单号</label>
+                            <div class="layui-input-inline">
+                                <input type="number" name="id" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">申请单审核状态</label>
+                            <div class="layui-input-inline" autocomplete="off" style="width: 100px;">
+                                <select name="state" >
+                                    <option value=""></option>
+                                    <option value="0">未提交</option>
+                                    <option value="1">已提交</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn1"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">生产日期</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="datelinestart" name="datelinestart">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="datelineend" name="datelineend">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn2"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">生产日期</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="datestart" name="datestart">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="dateend" name="dateend">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn3"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="search"> 搜索 </button>
+            </div>
+        </script>
+
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="buttonTpl">
+            {{#  if(d.state == 0){ }}
+            <button class="layui-btn layui-btn-warm layui-btn-xs">未提交</button>
+            {{#  } else if(d.state == 1) { }}
+            <button class="layui-btn layui-btn-xs">已提交</button>
+            {{#  } }}
+        </script>
+
+        <script type="text/html" id="currentTableBar">
+            {{#  if(d.state1 == 0){ }}
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            {{#  } else if(d.state1 == 1) { }}
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="detail">详情</a>
+            {{#  } }}
+
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table','miniPage','element','laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate,
+            miniPage = layui.miniPage;
+
+        var username = $("#001")[0].innerText;
+        // alert("已加载")
+
+        // //执行一个laydate实例
+        // laydate.render({
+        //     elem: '#datelinestart' //指定元素
+        //     ,format: 'yyyy-MM-dd' //可任意组合
+        // });
+        //
+        // laydate.render({
+        //     elem: '#test'
+        //     ,change: function(value, date, endDate){
+        //         console.log(value); //得到日期生成的值，如：2017-08-18
+        //         console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+        //         console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+        //     }
+        // });
+        //
+        // //执行一个laydate实例
+        // laydate.render({
+        //     elem: '#datelineend' //指定元素
+        //     ,format: 'yyyy-MM-dd' //可任意组合
+        //
+        // });
+
+        var start = laydate.render({
+            elem: '#datelinestart', //指定元素
+            format: 'yyyy-MM-dd', //可任意组合
+            type: 'date',
+            showBottom: false,
+            btns: ['clear', 'confirm'],
+            done: function(value, date){
+                endMax = end.config.max;
+                end.config.min = date;
+                end.config.min.month = date.month -1;
+            }
+        });
+
+        var end = laydate.render({
+            elem: '#datelineend', //指定元素
+            format: 'yyyy-MM-dd', //可任意组合
+            type: 'date',
+            showBottom: false,
+            done: function(value, date){
+                if($.trim(value) == ''){
+                    var curDate = new Date();
+                    date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
+                }
+                start.config.max = date;
+                start.config.max.month = date.month -1;
+            }
+        })
+
+
+        //表格设置
+        table.render({
+            elem: '#currentTableId',
+            url: 'applied/table?username='+username,
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'id', width: 200, title: '申请单号', sort: true},
+                {field: 'dateline', width: 200, title: '生产日期'},
+                {field: 'date', width: 200, title: '申请日期', sort: true},
+                {field: 'state', title:'审核状态', templet: '#buttonTpl', minWidth: 80, align: 'center'},
+                {field: 'state1', title: '操作', minWidth: 150, toolbar: '#currentTableBar ', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line',
+            method:'post'
+        });
+
+        // 监听搜索操作按键1
+        form.on('submit(data-search-btn1)', function (data) {
+
+            var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
+            setTimeout(function(){
+                //执行搜索重载
+                table.reload('currentTableId', {
+                    url: '/applied/search'
+                    , page: {
+                        curr: 1
+                    }
+                    , where: {
+                        id: data.field,
+                        state:data.field.state
+                    }
+                },'data');
+
+                layer.close(seachIndex);
+
+                },800);
+            return false;
+        });
+
+        // 监听搜索操作截止日期
+        form.on('submit(data-search-btn2)', function (data) {
+
+            var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
+            setTimeout(function(){
+                //执行搜索重载
+                table.reload('currentTableId', {
+                    url: '/applied/searchbytime'
+                    , page: {
+                        curr: 1
+                    }
+                    , where: {
+                        begin: data.field.datelinestart,
+                        end:data.field.datelineend,
+                        state:1
+                    }
+                },'data');
+
+                layer.close(seachIndex);
+
+            },800);
+            return false;
+        });
+
+
+        // 监听搜索操作截止日期
+        form.on('submit(data-search-btn3)', function (data) {
+
+            var searchIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
+            setTimeout(function(){
+                //执行搜索重载
+                table.reload('currentTableId', {
+                    url: '/applied/searchbytime'
+                    , page: {
+                        curr: 1
+                    }
+                    , where: {
+                        begin: data.field.datestart,
+                        end:data.field.dateend,
+                        state:0
+                    }
+                },'data');
+
+                layer.close(searchIndex);
+
+            },800);
+            return false;
+        });
+
+        var dateStart = laydate.render({
+            elem: '#datestart', //指定元素
+            format: 'yyyy-MM-dd', //可任意组合
+            type: 'date',
+            showBottom: false,
+            btns: ['clear', 'confirm'],
+            done: function(value, date){
+                endMax = end.config.max;
+                dateend.config.min = date;
+                dateend.config.min.month = date.month -1;
+            }
+        });
+
+        var dateend = laydate.render({
+            elem: '#dateend', //指定元素
+            format: 'yyyy-MM-dd', //可任意组合
+            type: 'date',
+            showBottom: false,
+            done: function(value, date){
+                if($.trim(value) == ''){
+                    var curDate = new Date();
+                    date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
+                }
+                dateStart.config.max = date;
+                dateStart.config.max.month = date.month -1;
+            }
+        })
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {   // 监听添加操作
+                var content = miniPage.getHrefContent("applying");
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '添加用户',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                });
+
+
+                //监听保存
+                form.on('submit(save)', function (data) {
+
+                    $.ajax({
+                        url:"applying/save",
+                        type:'post',
+                        data:JSON.stringify(data.field),
+                        contentType : "application/json",
+                        beforeSend:function () {
+                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                        },
+                        success:function(data){
+                            if(data.code == 400){//失败
+                                //alert("失败")
+                                layer.msg("保存失败", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            }else{
+                                layer.msg("保存成功", {//成功
+                                    icon: 6,//成功的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                // console.log(data.msg);
+                                $("#requisitionid").val(data.msg);
+                            }
+                        },
+                        complete: function () {
+                            layer.close(this.layerIndex);
+                        },
+                    });
+                    // layer.parent.reload('currentTableId');
+
+
+                    var tabledata = table.cache["currentTableId"]; //获取现有数据
+
+                    tabledata.push({
+                        "id": tabledata[tabledata.length-1].id+1
+                        ,"dateline": data.field.dateline
+                        ,"date":  "2021-05-25T16:00:00.000+00:00"
+                        ,"state": data.field.state
+                        ,"state1": data.field.state
+                    })//添加数据,  字段名对应值.  不要初始值的话 留空即可.
+
+                    //下面表格需要重载一下 才会刷新显示.
+                    table.reload("currentTableId", {
+                        data: tabledata,
+                    })
+
+
+                    return false;
+                });
+
+
+                //监听提交
+                form.on('submit(saveBtn)', function (data) {
+                    $.ajax({
+                        url:"applying/submit",
+                        type:'post',
+                        data:JSON.stringify(data.field),
+                        contentType : "application/json",
+                        beforeSend:function () {
+                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                        },
+                        success:function(data){
+                            if(data.code == 400){//失败
+                                layer.msg("提交失败", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            }else{
+                                layer.msg("提交成功", {//成功
+                                    icon: 6,//成功的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+
+                                //锁死表单选项
+                                $('.yuanliao').attr('disabled', 'disabled');
+                                $('.number').attr('disabled', 'disabled');
+                                $('#dateline').attr('disabled', 'disabled');
+                                $('.tijiao').attr('disabled', 'disabled');
+                                form.render('select');
+                            }
+                        },
+                        error:function (data) {
+                            alert("提交失败")
+                        },
+                        complete: function () {
+                            layer.close(this.layerIndex);
+                        },
+                    });
+                    layer.closeAll();
+                    table.reload('currentTableId');
+                    return false;
+                });
+
+
+
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                $.ajax({
+                    url:"applied/delete",
+                    type:'post',
+                    data:JSON.stringify(data),
+                    contentType : "application/json",
+                    beforeSend:function () {
+                        this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                    },
+                    success:function(data){
+                        if(data.code == 400){//失败
+                            //alert("失败")
+                            layer.msg("删除失败", {
+                                icon: 5,//失败的表情
+                                time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                            });
+                            return;
+                        }else{
+                            layer.msg("删除成功", {//成功
+                                icon: 6,//成功的表情
+                                time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                            });
+                        }
+                    },
+                    complete: function () {
+                        layer.close(this.layerIndex);
+                    },
+                });
+                table.reload('currentTableId');
+                return false;
+            } else if(obj.event === 'search'){
+                var flag = document.getElementById("searchBurId").hidden;
+                document.getElementById("searchBurId").hidden = !flag ;
+                // document.getElementById("searchBurId").removeAttribute("hidden");
+                return false;
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        //监听表格的工具
+        table.on('tool(currentTableFilter)', function (obj) {
+            if (obj.event === 'edit') {
+
+                var content = miniPage.getHrefContent('applied/edit?id='+obj.data.id);
+                var openWH = miniPage.getOpenWidthHeight();
+                var index = layer.open({
+                    title: '编辑申请单',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                });
+
+                //监听保存
+                form.on('submit(save)', function (data) {
+
+                    $.ajax({
+                        url:"applying/save",
+                        type:'post',
+                        data:JSON.stringify(data.field),
+                        contentType : "application/json",
+                        beforeSend:function () {
+                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                        },
+                        success:function(data){
+                            if(data.code == 400){//失败
+                                //alert("失败")
+                                layer.msg("保存失败", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            }else{
+                                layer.msg("保存成功", {//成功
+                                    icon: 6,//成功的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                // console.log(data.msg);
+                                $("#requisitionid").val(data.msg);
+                            }
+                        },
+                        complete: function () {
+                            layer.close(this.layerIndex);
+                        },
+                    });
+
+                    obj.update({
+                        dateline:"2021-05-21 13:48:22.705000",
+                        state1:" <a class=\"layui-btn layui-btn-normal layui-btn-xs data-count-edit\" lay-event=\"edit\">编辑</a>" +
+                            "<a class=\"layui-btn layui-btn-xs layui-btn-danger data-count-delete\" lay-event=\"delete\">删除</a>",
+                    });//修改成功修改表格数据不进行跳转
+
+                    return false;
+                });
+
+                //监听提交
+                form.on('submit(saveBtn)', function(data) {
+                    $.ajax({
+                        url:"applying/submit",
+                        type:'post',
+                        data:JSON.stringify(data.field),
+                        contentType : "application/json",
+                        beforeSend:function () {
+                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                        },
+                        success:function(data){
+                            if(data.code == 400){//失败
+                                layer.msg("提交失败", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            }else{
+                                layer.msg("提交成功", {//成功
+                                    icon: 6,//成功的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+
+                                //锁死表单选项
+                                $('.yuanliao').attr('disabled', 'disabled');
+                                $('.number').attr('disabled', 'disabled');
+                                $('#dateline').attr('disabled', 'disabled');
+                                $('.tijiao').attr('disabled', 'disabled');
+                                form.render('select');
+                            }
+                        },
+                        error:function (data) {
+                            alert("提交失败")
+                        },
+                        complete: function () {
+                            layer.close(this.layerIndex);
+                        },
+                    });
+
+                    obj.update({
+                        dateline:"2021-05-21 13:48:22.705000",
+                        state:1,
+                        state1:" <a class=\"layui-btn layui-btn-normal layui-btn-xs data-count-edit\" lay-event=\"detail\">详情</a>" +
+                            "<a class=\"layui-btn layui-btn-xs layui-btn-danger data-count-delete\" lay-event=\"delete\">删除</a>",
+                    });//修改成功修改表格数据不进行跳转
+
+                    layer.closeAll();
+
+                    return false;
+                });
+
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+
+                return false;
+            } else if (obj.event === 'detail') {
+                var content = miniPage.getHrefContent('test6');
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '申请单详情',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                });
+
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+
+            } else if(obj.event === 'delete'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    $.ajax({
+                        url:"applied/deleteone",
+                        type:'post',
+                        data:JSON.stringify(obj.data),
+                        contentType : "application/json",
+                        beforeSend:function () {
+                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                        },
+                        success:function(data){
+                            if(data.code == 400){//失败
+                                //alert("失败")
+                                layer.msg("删除失败", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            }else{
+                                layer.msg("删除成功", {//成功
+                                    icon: 6,//成功的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                            }
+                        },
+                        complete: function () {
+                            layer.close(this.layerIndex);
+                        },
+                    });
+                });
+            }
+        });
+
+
+
+
+    });
+</script>
