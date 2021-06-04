@@ -124,7 +124,7 @@ public class Employee {
     }
 
     //所属职位-部门
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Position> position;
 
     public Set<Position> getPosition() {

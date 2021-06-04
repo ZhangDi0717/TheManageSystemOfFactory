@@ -37,6 +37,11 @@ public class VerificationCodeFilter extends OncePerRequestFilter {
             try {
                 //验证 验证码是否正确
                 verificationCode(httpServletRequest);
+
+                //在session中写入用户名
+                HttpSession session = httpServletRequest.getSession();
+                session.setAttribute("username",httpServletRequest.getParameter("username"));
+
                 //如果验证通过过滤器正常执行
                 filterChain.doFilter(httpServletRequest,httpServletResponse);
 

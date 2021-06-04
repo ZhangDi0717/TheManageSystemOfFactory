@@ -11,7 +11,7 @@ public class IndexController {
     @RequestMapping("/index")
     private ModelAndView index(){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("index");
+        mv.setViewName("templates/index");
         return mv;
     }
 }

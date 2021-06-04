@@ -108,6 +108,11 @@ layui.use(['form', 'layer', 'jquery'], function () {
                         changeImg();
                     })
                 }
+            },
+            error: function (res){
+                layer.msg("请求服务失败");
+                //设置登录按钮  为可点击
+                btn.text("登录").attr("disabled", false).removeClass("layui-disabled");
             }
         })
     });

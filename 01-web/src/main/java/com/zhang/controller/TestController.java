@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -165,6 +167,23 @@ public class TestController {
         return JSON.parseObject(json);
     }
 
+
+    //测试session
+    @RequestMapping(value = "test8")
+    @ResponseBody
+    private String test8(HttpServletRequest httpServletRequest){
+        String sessionCode = "";
+        HttpSession session = httpServletRequest.getSession();
+        int maxInactiveInterval = httpServletRequest.getSession().getMaxInactiveInterval();
+
+        System.out.println("session的生命周期---"+maxInactiveInterval);
+        //获取系统验证码
+        Object attr = session.getAttribute("username");
+        if( attr != null ){
+            sessionCode = (String)attr;
+        }
+        return sessionCode;
+    }
 
 
 }
