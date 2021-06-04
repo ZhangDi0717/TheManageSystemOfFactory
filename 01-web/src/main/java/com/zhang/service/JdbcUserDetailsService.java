@@ -98,7 +98,8 @@ public class JdbcUserDetailsService implements UserDetailsService {
             if(grantedAuthority.getAuthority().equals("ROLE_ADMIN")){
                 LoginResult loginResult = new LoginResult();
                 loginResult.setCode(200);
-                loginResult.setMsg("/adminpage?username="+username);
+//                loginResult.setMsg("/adminpage?username="+username);
+                loginResult.setMsg("/admin/homepage");
                 successHandler.setLoginResult(loginResult);
             }else if( grantedAuthority.getAuthority().equals("ROLE_APPLY") ){
                 LoginResult loginResult = new LoginResult();

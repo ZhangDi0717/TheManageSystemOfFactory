@@ -1,2 +1,6 @@
-ROLE_ADMIN  :  /admin/homepage
+ROLE_ADMIN  :   首页                    /admin/homepage
+                申请单管理               /admin/apply/manage
+                人员管理                /admin/employee/manage
+                权限管理                /admin/permission/manage
+
 ROLE_APPLY  :  /apply/homepage
