@@ -1,0 +1,8 @@
+状态码         意义        图标
+0             未提交      layui-btn layui-btn-sm layui-btn-warm
+1             待审批      layui-btn layui-btn-sm
+2             审批中      layui-btn layui-btn-sm layui-btn-normal
+3             已退回      layui-btn layui-btn-sm layui-btn-danger
+4             配送中      layui-btn layui-btn-sm layui-btn-normal
+5             生产中      layui-btn layui-btn-sm layui-btn-normal
+6             已完成      layui-btn layui-btn-sm

@@ -737,9 +737,9 @@ public class ApplyController {
             List<Requisition> requisitionList = null;
 
             if( Integer.parseInt(state)==1 ){//查询截止日期范围
-                requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(beginDate),sdf.parse(endDate));
+                requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(beginDate),sdf.parse(endDate));//查询有错误，应该加上声请人的搜索条件
            }else {
-               requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(beginDate),sdf.parse(endDate));
+               requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(beginDate),sdf.parse(endDate));//查询有错误，应该加上声请人的搜索条件
            }
 
             applyTableResult.setCode(0);

@@ -1,11 +1,19 @@
 package com.zhang.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zhang.dao.DistributionImpl;
+import com.zhang.dao.EmployeeImpl;
+import com.zhang.dao.PositionImpl;
 import com.zhang.dao.RequisitionImpl;
+import com.zhang.entity.Distribution;
+import com.zhang.entity.Employee;
+import com.zhang.entity.Position;
 import com.zhang.entity.Requisition;
 import com.zhang.vo.PageInit;
 import com.zhang.vo.adminTableResult.AdminTable;
 import com.zhang.vo.adminTableResult.AdminTableResult;
+import com.zhang.vo.applyTableResult.ApplyTable;
+import com.zhang.vo.applyTableResult.ApplyTableResult;
 import com.zhang.vo.initPage.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Action;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +34,15 @@ public class AdminController {
 
     @Autowired
     private RequisitionImpl requisitionimpl;
+
+    @Autowired
+    private EmployeeImpl employeeimpl;
+
+    @Autowired
+    private PositionImpl positionimpl;
+
+    @Autowired
+    private DistributionImpl distributionimpl;
 
 
     //响应主页
@@ -144,8 +162,10 @@ public class AdminController {
      *          返回数据表格
      *
      * 页面响应数据:
-     *      adminTableIdUrl         数据表格的请求地址           apply/table
-     *
+     *      adminTableIdUrl             数据表格的请求地址           apply/table
+     *      adminSearchByDatelineDir    根据生产截止日期搜索申请单     apply/searchdate
+     *      adminSearchByIdDir          根据申请单Id搜索
+     *      adminSearchDir              根据条件搜索指定的申请单       apply/search
      *
      *
      * @return 相应页面
@@ -156,6 +176,19 @@ public class AdminController {
         ModelAndView mv = new ModelAndView();
 
         mv.addObject("adminTableIdUrl","apply/table");
+
+        mv.addObject("adminSearchByDateDir","apply/searchdate");
+
+        mv.addObject("adminSearchDir","apply/search");
+        //响应申请/生产员工
+        List<Employee> appliedList =  employeeimpl.findByPosition(positionimpl.getOne(Long.parseLong("2")));
+        mv.addObject("appliedList",appliedList);
+        //响应配送员工
+        List<Employee> deliverymanList =  employeeimpl.findByPosition(positionimpl.getOne(Long.parseLong("4")));
+        mv.addObject("deliverymanList",deliverymanList);
+        //响应申请单Id
+        List<Requisition> applyList = requisitionimpl.findAll();
+        mv.addObject("applyList",applyList);
 
 
 
@@ -199,8 +232,242 @@ public class AdminController {
         return jsonObject;
     }
 
+    //adminSearchDir              根据条件搜索指定的申请单       apply/search
+    @RequestMapping(value = "admin/apply/search",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject search(@RequestParam(value = "applyId", required = false,defaultValue = "") String applyId,
+                             @RequestParam(value = "appliedId", required = false, defaultValue = "") String appliedId,
+                             @RequestParam(value = "deliverymanId", required = false, defaultValue = "") String deliverymanId,
+                             @RequestParam(value = "applyState", required = false, defaultValue = "") String applyState,
+                             @RequestParam(value = "dateStart",required = false,defaultValue = "") String dateStart,
+                             @RequestParam(value = "dateEnd",required = false,defaultValue = "") String dateEnd,
+                             @RequestParam(value = "datelineStart",required = false,defaultValue = "") String datelineStart,
+                             @RequestParam(value = "datelineEnd",required = false,defaultValue = "") String datelineEnd){
+        System.out.println("进入------search");
+        int flag = 1;
+        JSONObject jsonObject = new JSONObject();
+        AdminTableResult adminTableResult = null;
+        List<AdminTable> adminTableList = new ArrayList<AdminTable>();
 
-    //人员管理
+        try {
+            //单独查询
+            if( !applyId.isEmpty()){//订单Id
+                Requisition requisition = requisitionimpl.getOne(Integer.parseInt(applyId));
+                List<AdminTable> TableList = new ArrayList<AdminTable>();
+                TableList.add(new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId())
+                );
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(TableList); // bingList为 [1, 2]
+                    adminTableList.addAll(TableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(TableList);
+                }
+            }
+
+            if( !appliedId.isEmpty()) {//申请人
+                List<Requisition> requisitionList = requisitionimpl.findByEmployee(employeeimpl.getOne(Long.parseLong(appliedId)));
+                List<AdminTable> TableList = new ArrayList<AdminTable>();
+                //封装表格
+                for (Requisition requisition :requisitionList) {
+                    TableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(TableList); // bingList为 [1, 2]
+                    adminTableList.addAll(TableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(TableList);
+                }
+
+            }
+
+            if( !deliverymanId.isEmpty()){//配送员
+                List<Distribution> distributionList = distributionimpl.findByEmployee(employeeimpl.getOne(Long.parseLong(deliverymanId)));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Distribution distribution: distributionList) {
+                    Requisition requisition = requisitionimpl.findByDistribution(distribution);
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+
+            }
+
+            if( !applyState.isEmpty() ){//通过申请单状态
+                List<Requisition> requisitionList = requisitionimpl.findByState(Integer.parseInt(applyState));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+
+            }
+
+            if( !dateStart.isEmpty()){//申请日期
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                List<Requisition> requisitionList = requisitionimpl.findByDateBetween(sdf.parse(dateStart), sdf.parse(dateEnd));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+            }
+
+            if( !datelineStart.isEmpty()){//生产日期
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                List<Requisition> requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(dateStart), sdf.parse(dateEnd));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+            }
+
+            adminTableResult = new AdminTableResult(
+                    0,
+                    "查询成功",
+                    adminTableList.size(),
+                    adminTableList
+            );
+
+        }catch (Exception e){
+            System.out.println("search 处理失败");
+            adminTableResult = new AdminTableResult(
+                    404,
+                    "查询失败",
+                    0,
+                    null
+            );
+        }
+
+
+        jsonObject = (JSONObject) JSONObject.toJSON(adminTableResult);
+
+        return jsonObject;
+
+    }
+
+    // adminSearchByDatelineDir    根据生产截止日期搜索申请单     apply/searchdate
+    @RequestMapping(value = "admin/apply/searchdate",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject searchByDateTime(@RequestParam(value = "begin",required = false,defaultValue = "") String beginDate,
+                                   @RequestParam(value = "end",required = false,defaultValue = "") String endDate,
+                                   @RequestParam(value = "state",required = false,defaultValue = "") String state){
+
+        System.out.println("进入---searchByDateTime");
+        JSONObject jsonObject = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            AdminTableResult adminTableResult = new AdminTableResult();
+            List<Requisition> requisitionList = null;
+
+            if( Integer.parseInt(state)==1 ){//查询截止日期范围
+                requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(beginDate),sdf.parse(endDate));
+            }else {
+                requisitionList = requisitionimpl.findByDateBetween(sdf.parse(beginDate),sdf.parse(endDate));
+            }
+
+            adminTableResult.setCode(0);
+            adminTableResult.setMsg("查询成功");
+            adminTableResult.setCount(requisitionList.size());
+
+            //封装响应数据
+            List<AdminTable> adminTableList = new ArrayList<AdminTable>();
+            for (Requisition requisition :requisitionList) {
+                adminTableList.add(new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId()
+                ));
+            }
+
+            adminTableResult.setData(adminTableList);
+            jsonObject = (JSONObject) JSONObject.toJSON(adminTableResult);
+        }catch (Exception e){
+            jsonObject = (JSONObject) JSONObject.toJSON(new AdminTableResult(500,"请求响应失败",0,null));
+        }
+        return jsonObject;
+    }
+
+
+    /**
+     *
+     * @return
+     */
     @RequestMapping(value = "admin/employee/manage")
     private ModelAndView employeeManage(){
         System.out.println("进入-----employeeManage");
@@ -212,9 +479,10 @@ public class AdminController {
     }
 
 
-
-
-    //权限管理
+    /**
+     *
+     * @return
+     */
     @RequestMapping(value = "admin/permission/manage")
     private ModelAndView permissionManage(){
         System.out.println("进入-----permissionManage");

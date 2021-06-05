@@ -1,5 +1,6 @@
 package com.zhang.dao;
 
+import com.zhang.entity.Distribution;
 import com.zhang.entity.Employee;
 import com.zhang.entity.Requisition;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,11 @@ public interface RequisitionImpl extends JpaRepository<Requisition,Integer> {
     List<Requisition> findByIdAndState(Integer id,Integer state);
 
     List<Requisition> findByDatelineBetween(Date beginDate, Date endDate);
+
+    List<Requisition> findByDateBetween(Date beginDate, Date endDate);
+
+    List<Requisition> findByEmployee(Employee employee);
+
+
+    Requisition findByDistribution(Distribution distribution);
 }

@@ -5,69 +5,156 @@
         <fieldset class="table-search-fieldset" hidden="hidden" id="searchBurId">
             <legend>搜索信息</legend>
             <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
+
+<!--                <form class="layui-form layui-form-pane" action="">-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <div class="layui-inline">-->
+<!--                            <label class="layui-form-label">申请单号</label>-->
+<!--                            <div class="layui-input-inline">-->
+<!--                                <input type="number" name="id" autocomplete="off" class="layui-input">-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="layui-inline">-->
+<!--                            <label class="layui-form-label">申请单审核状态</label>-->
+<!--                            <div class="layui-input-inline" autocomplete="off" style="width: 100px;">-->
+<!--                                <select name="state" >-->
+<!--                                    <option value=""></option>-->
+<!--                                    <option value="0">未提交</option>-->
+<!--                                    <option value="1">已提交</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="layui-inline">-->
+<!--                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="admin-search-btn1"><i class="layui-icon"></i> 搜 索</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </form>-->
+
+<!--                <form class="layui-form layui-form-pane" action="">-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <div class="layui-inline">-->
+<!--                            <label class="layui-form-label">生产日期</label>-->
+<!--                            <div class="layui-input-inline" style="width: 100px;">-->
+<!--                                <input type="text"  class="layui-input" id="datestart" name="datestart">-->
+<!--                            </div>-->
+<!--                            <div class="layui-form-mid">-</div>-->
+<!--                            <div class="layui-input-inline" style="width: 100px;">-->
+<!--                                <input type="text"  class="layui-input" id="dateend" name="dateend">-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="layui-inline">-->
+<!--                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="admin-search-btn2"><i class="layui-icon"></i> 搜 索</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </form>-->
+
+<!--                <form class="layui-form layui-form-pane" action="">-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <div class="layui-inline">-->
+<!--                            <label class="layui-form-label">截止日期</label>-->
+<!--                            <div class="layui-input-inline" style="width: 100px;">-->
+<!--                                <input type="text"  class="layui-input" id="datelinestart" name="datelinestart">-->
+<!--                            </div>-->
+<!--                            <div class="layui-form-mid">-</div>-->
+<!--                            <div class="layui-input-inline" style="width: 100px;">-->
+<!--                                <input type="text"  class="layui-input" id="datelineend" name="datelineend">-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="layui-inline">-->
+<!--                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="admin-search-btn3"><i class="layui-icon"></i> 搜 索</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </form>-->
+
+                <form class="layui-form" action="">
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">申请员工</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="appliedId" id="appliedId">
+                                    <option value=""></option>
+                                    <option value="" th:each="applied:${appliedList}" th:value="${applied.getId()}" th:text="${applied.getUsername()}" ></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">配送员工</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="deliverymanId"  id="deliverymanId">
+                                    <option value=""></option>
+                                    <option value="" th:each="deliveryman:${deliverymanList}" th:value="${deliveryman.getId()}" th:text="${deliveryman.getUsername()}" ></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">申请单号</label>
                             <div class="layui-input-inline">
-                                <input type="number" name="id" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <label class="layui-form-label">申请单审核状态</label>
-                            <div class="layui-input-inline" autocomplete="off" style="width: 100px;">
-                                <select name="state" >
+                                <select name="applyId" id="applyId" lay-search>
                                     <option value=""></option>
-                                    <option value="0">未提交</option>
-                                    <option value="1">已提交</option>
+                                    <option value="" th:each="apply:${applyList}" th:value="${apply.getId()}" th:text="${apply.getId()}" ></option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn1"><i class="layui-icon"></i> 搜 索</button>
+                            <label class="layui-form-label">审核状态</label>
+                            <div class="layui-input-inline" autocomplete="off" style="width: 100px;">
+                                <select name="applyState" >
+                                    <option value=""></option>
+                                    <option value="0">未提交</option>
+                                    <option value="1">待审核</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </form>
 
-                <form class="layui-form layui-form-pane" action="">
+
                     <div class="layui-form-item">
+
                         <div class="layui-inline">
                             <label class="layui-form-label">生产日期</label>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text"  class="layui-input" id="datelinestart" name="datelinestart">
+                                <input type="text"  class="layui-input" id="dateStart" name="dateStart">
                             </div>
                             <div class="layui-form-mid">-</div>
                             <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text"  class="layui-input" id="datelineend" name="datelineend">
+                                <input type="text"  class="layui-input" id="dateEnd" name="dateEnd">
                             </div>
                         </div>
-
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn2"><i class="layui-icon"></i> 搜 索</button>
+                            <label class="layui-form-label">截止日期</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="datelineStart" name="datelineStart">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="datelineEnd" name="datelineEnd">
+                            </div>
                         </div>
                     </div>
-                </form>
 
-                <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">生产日期</label>
-                            <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text"  class="layui-input" id="datestart" name="datestart">
-                            </div>
-                            <div class="layui-form-mid">-</div>
-                            <div class="layui-input-inline" style="width: 100px;">
-                                <input type="text"  class="layui-input" id="dateend" name="dateend">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn3"><i class="layui-icon"></i> 搜 索</button>
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="admin-search-btn4"><i class="layui-icon"></i> 搜 索</button>
                         </div>
                     </div>
+
+
+
                 </form>
+
             </div>
         </fieldset>
 
@@ -86,17 +173,17 @@
             {{#  if(d.state == 0){ }}
             <button class="layui-btn layui-btn-warm layui-btn-xs">未提交</button>
             {{#  } else if(d.state == 1) { }}
-            <button class="layui-btn layui-btn-warm layui-btn-xs">待审批</button><!--审批人员还没有打开-->
+            <button class="layui-btn layui-btn-xs">待审批</button><!--审批人员还没有打开-->
             {{#  } else if(d.state == 2) { }}
-            <button class="layui-btn layui-btn-warm layui-btn-xs">审批中</button><!--审批人员打开但没有完成审批-->
+            <button class="layui-btn layui-btn-normal layui-btn-xs">审批中</button><!--审批人员打开但没有完成审批-->
             {{#  } else if(d.state == 3) { }}
-            <button class="layui-btn layui-btn-warm layui-btn-xs">已退回</button><!--审批不通过-->
+            <button class="layui-btn layui-btn-danger layui-btn-xs">已退回</button><!--审批不通过-->
             {{#  } else if(d.state == 4) { }}
-            <button class="layui-btn layui-btn-warm layui-btn-xs">配送中</button><!--审批已通过，原辅料配送中-->
+            <button class="layui-btn layui-btn-normal layui-btn-xs">配送中</button><!--审批已通过，原辅料配送中-->
             {{#  } else if(d.state == 5) { }}
-            <button class="layui-btn layui-btn-warm layui-btn-xs">生产中</button>
+            <button class="layui-btn layui-btn-normal layui-btn-xs">生产中</button>
             {{#  } else if(d.state == 6) { }}
-            <button class="layui-btn layui-btn-warm layui-btn-xs">已完成</button>
+            <button class="layui-btn layui-btn-xs">已完成</button>
             {{#  } }}
         </script>
 
@@ -125,29 +212,21 @@
         // alert("已加载")
 
         // //执行一个laydate实例
-        // laydate.render({
-        //     elem: '#datelinestart' //指定元素
-        //     ,format: 'yyyy-MM-dd' //可任意组合
-        // });
-        //
-        // laydate.render({
-        //     elem: '#test'
-        //     ,change: function(value, date, endDate){
-        //         console.log(value); //得到日期生成的值，如：2017-08-18
-        //         console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
-        //         console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
-        //     }
-        // });
-        //
-        // //执行一个laydate实例
-        // laydate.render({
-        //     elem: '#datelineend' //指定元素
-        //     ,format: 'yyyy-MM-dd' //可任意组合
-        //
-        // });
+        laydate.render({
+            elem: '#datelineStart' //指定元素
+            ,format: 'yyyy-MM-dd' //可任意组合
+        });
 
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#datelineEnd' //指定元素
+            ,format: 'yyyy-MM-dd' //可任意组合
+
+        });
+
+        //截止日期搜索控制--前输入框
         var start = laydate.render({
-            elem: '#datelinestart', //指定元素
+            elem: '#datelineStart', //指定元素
             format: 'yyyy-MM-dd', //可任意组合
             type: 'date',
             showBottom: false,
@@ -159,8 +238,9 @@
             }
         });
 
+        //生产日期搜索控制--后输入框
         var end = laydate.render({
-            elem: '#datelineend', //指定元素
+            elem: '#datelineEnd', //指定元素
             format: 'yyyy-MM-dd', //可任意组合
             type: 'date',
             showBottom: false,
@@ -175,7 +255,36 @@
         })
 
 
-        console.log('[[${adminTableIdUrl}]]');
+        //创建日期搜索控制--前输入框
+        var datestart = laydate.render({
+            elem: '#dateStart', //指定元素
+            format: 'yyyy-MM-dd', //可任意组合
+            type: 'date',
+            showBottom: false,
+            btns: ['clear', 'confirm'],
+            done: function(value, date){
+                endMax = end.config.max;
+                dateend.config.min = date;
+                dateend.config.min.month = date.month -1;
+            }
+        });
+
+        //创建日期搜索控制--后输入框
+        var dateend = laydate.render({
+            elem: '#dateEnd', //指定元素
+            format: 'yyyy-MM-dd', //可任意组合
+            type: 'date',
+            showBottom: false,
+            done: function(value, date){
+                if($.trim(value) == ''){
+                    var curDate = new Date();
+                    date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
+                }
+                datestart.config.max = date;
+                datestart.config.max.month = date.month -1;
+            }
+        })
+
 
         //表格设置
         table.render({
@@ -191,6 +300,7 @@
                     [
                         {type: "checkbox", width: 50},
                         {field: 'id', width: 200, title: '申请单号', sort: true},
+                        {field: 'applyEmployeeId', width: 200, title: '申请人编号', sort: true},
                         {field: 'dateline', width: 200, title: '生产日期'},
                         {field: 'date', width: 200, title: '申请日期', sort: true},
                         {field: 'state', title:'审核状态', templet: '#buttonTpl', minWidth: 80, align: 'center'},
@@ -207,7 +317,7 @@
 
 
         // 监听搜索操作按键1
-        form.on('submit(data-search-btn1)', function (data) {
+        form.on('submit(admin-search-btn1)', function (data) {
 
             var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
             setTimeout(function(){
@@ -229,39 +339,23 @@
             return false;
         });
 
-        // 监听搜索操作截止日期
-        form.on('submit(data-search-btn2)', function (data) {
 
-            var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
-            setTimeout(function(){
-                //执行搜索重载
-                table.reload('adminTableId', {
-                    url: '/applied/searchbytime'
-                    , page: {
-                        curr: 1
-                    }
-                    , where: {
-                        begin: data.field.datelinestart,
-                        end:data.field.datelineend,
-                        state:1
-                    }
-                },'data');
+        // 监听搜索申请日期
+        form.on('submit(admin-search-btn2)', function (data) {
 
-                layer.close(seachIndex);
+            console.log(data.field.datestart);
 
-            },800);
-            return false;
-        });
-
-
-        // 监听搜索操作截止日期
-        form.on('submit(data-search-btn3)', function (data) {
+            //两者都不为空
+            if(data.field.datestart=="" || data.field.dateend==""){
+                layer.msg("搜索日期不能为空",{icon:5,time:500})
+                return false;
+            }
 
             var searchIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
             setTimeout(function(){
                 //执行搜索重载
                 table.reload('adminTableId', {
-                    url: '/applied/searchbytime'
+                    url: '[[${adminSearchByDateDir}]]'
                     , page: {
                         curr: 1
                     }
@@ -278,33 +372,80 @@
             return false;
         });
 
-        var dateStart = laydate.render({
-            elem: '#datestart', //指定元素
-            format: 'yyyy-MM-dd', //可任意组合
-            type: 'date',
-            showBottom: false,
-            btns: ['clear', 'confirm'],
-            done: function(value, date){
-                endMax = end.config.max;
-                dateend.config.min = date;
-                dateend.config.min.month = date.month -1;
+
+        // 监听搜索操作截止日期
+        form.on('submit(admin-search-btn3)', function (data) {
+            //两者都不为空
+            if(data.field.datelinestart=="" || data.field.datelinestart==""){
+                layer.msg("搜索日期不能为空",{icon:5,time:500})
+                return false;
             }
+
+            var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
+            setTimeout(function(){
+
+                //执行搜索重载
+                table.reload('adminTableId', {
+                    url: '[[${adminSearchByDateDir}]]'
+                    , page: {
+                        curr: 1
+                    }
+                    , where: {
+                        begin: data.field.datelinestart,
+                        end:data.field.datelineend,
+                        state:1
+                    }
+                },'data');
+
+                layer.close(seachIndex);
+
+            },800);
+            return false;
         });
 
-        var dateend = laydate.render({
-            elem: '#dateend', //指定元素
-            format: 'yyyy-MM-dd', //可任意组合
-            type: 'date',
-            showBottom: false,
-            done: function(value, date){
-                if($.trim(value) == ''){
-                    var curDate = new Date();
-                    date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
-                }
-                dateStart.config.max = date;
-                dateStart.config.max.month = date.month -1;
-            }
-        })
+        // 总监听按钮
+        form.on('submit(admin-search-btn4)', function (data) {
+            //
+            // console.log(data.field.datelineStart==data.field.datelineEnd);
+            // console.log(data.field.datelineStart);
+            // console.log(data.field.dateStart);
+            if( data.field.dateStart!=data.field.dateEnd && (data.field.dateStart==""||data.field.dateEnd=="")){//申请日期控制:前后不相等且有一个为空->提示错误
+                layer.msg("搜索日期填写不正确",{icon:5,time:500})
+                return false;
+            };
+            if( data.field.datelineStart!=data.field.datelineEnd && (data.field.datelineStart==""||data.field.datelineEnd=="") ){//生产日期控制:前后不相等且有一个为空->提示错误
+                layer.msg("搜索日期填写不正确",{icon:5,time:500})
+                return false;
+            };
+
+            var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
+            setTimeout(function(){
+
+                //执行搜索重载
+                table.reload('adminTableId', {
+                    url: '[[${adminSearchDir}]]'
+                    , page: {
+                        curr: 1
+                    }
+                    , where: {
+                        applyId : data.field.applyId,
+                        appliedId : data.field.appliedId,
+                        deliverymanId : data.field.deliverymanId,
+                        applyState : data.field.applyState,
+                        dateStart : data.field.dateStart,
+                        dateEnd : data.field.dateEnd,
+                        datelineStart : data.field.datelineStart,
+                        datelineEnd : data.field.datelineEnd,
+                    }
+                },'data');
+
+                layer.close(seachIndex);
+
+            },800);
+            return false;
+        });
+
+
 
         /**
          * toolbar事件监听

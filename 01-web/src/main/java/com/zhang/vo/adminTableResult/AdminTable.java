@@ -91,4 +91,18 @@ public class AdminTable {
     public void setApplyEmployeeId(Long applyEmployeeId) {
         this.applyEmployeeId = applyEmployeeId;
     }
+
+    @Override
+    public boolean equals(Object adminTable) {
+        if(this.id == ((AdminTable)adminTable).id){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.id.toString();
+    }
 }
