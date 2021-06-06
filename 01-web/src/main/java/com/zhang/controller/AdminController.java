@@ -1,29 +1,28 @@
 package com.zhang.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zhang.dao.DistributionImpl;
-import com.zhang.dao.EmployeeImpl;
-import com.zhang.dao.PositionImpl;
-import com.zhang.dao.RequisitionImpl;
-import com.zhang.entity.Distribution;
-import com.zhang.entity.Employee;
-import com.zhang.entity.Position;
-import com.zhang.entity.Requisition;
+import com.zhang.dao.*;
+import com.zhang.entity.*;
 import com.zhang.vo.PageInit;
+import com.zhang.vo.Result;
 import com.zhang.vo.adminTableResult.AdminTable;
 import com.zhang.vo.adminTableResult.AdminTableResult;
 import com.zhang.vo.applyTableResult.ApplyTable;
 import com.zhang.vo.applyTableResult.ApplyTableResult;
+import com.zhang.vo.employeeTableResult.EmployeeTable;
+import com.zhang.vo.employeeTableResult.EmployeeTableResult;
 import com.zhang.vo.initPage.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.Action;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 管理员服务
@@ -43,6 +42,18 @@ public class AdminController {
 
     @Autowired
     private DistributionImpl distributionimpl;
+
+    @Autowired
+    private MaterialImpl materialimpl;
+
+    @Autowired
+    private MainIngredientImpl mainIngredientimpl;
+
+    @Autowired
+    private IngredientImpl ingredientimpl;
+
+    @Autowired
+    private EmployeeInformationImpl employeeinformationimpl;
 
 
     //响应主页
@@ -66,7 +77,7 @@ public class AdminController {
 
         PageInit pageInit = new PageInit();
         //  1
-        HomeInfo homeInfo = new HomeInfo("首页","");
+        HomeInfo homeInfo = new HomeInfo("首页","/admin/apply/manage");
         pageInit.setHomeInfo(homeInfo);
         //  2
         LogoInfo logoInfo = new LogoInfo("后台管理系统","../images/logo.png","");
@@ -74,7 +85,7 @@ public class AdminController {
         //  3
         List<MenuInfo> menuInfos = new ArrayList<MenuInfo>();
 
-        List<Son> sons1 = new ArrayList<Son>();
+//        List<Son> sons1 = new ArrayList<Son>();
         List<Son> sons2 = new ArrayList<Son>();
         List<Son> sons3 = new ArrayList<Son>();
         List<Son> sons4 = new ArrayList<Son>();
@@ -86,9 +97,9 @@ public class AdminController {
 //      sons1.add(son1);
 
         //申请单功能演示
-        Son son1_2 = new Son("查看申请","page/apply/applied.html","fa fa-tachometer","_self");
-        sons1.add(son1_2);
-
+//        Son son1_2 = new Son("查看申请","page/apply/applied.html","fa fa-tachometer","_self");
+//        sons1.add(son1_2);
+//
         //个人信息功能演示
         Son son2_1 = new Son("个人信息","page/user-setting.html","fa fa-tachometer","_self");
         sons2.add(son2_1);
@@ -112,17 +123,17 @@ public class AdminController {
         /****  添加三级菜单 EDN ****/
 
 
-        List<Child> children1 = new ArrayList<Child>();
+//        List<Child> children1 = new ArrayList<Child>();
         List<Child> children2 = new ArrayList<Child>();
 
 
         /****  添加二级菜单 START ****/
 
-        Child child1_1 = new Child("申请单","","fa fa-file-text-o","_self",sons1);
-        children1.add(child1_1);
-
-        Child child1_2 = new Child("个人设置","","fa fa-user","_self",sons2);
-        children1.add(child1_2);
+//        Child child1_1 = new Child("申请单","","fa fa-file-text-o","_self",sons1);
+//        children1.add(child1_1);
+//
+//        Child child1_2 = new Child("个人设置","","fa fa-user","_self",sons2);
+//        children1.add(child1_2);
 
         Child child2_1 = new Child("申请单管理","","fa fa-file-text-o","_self",sons3);
         children2.add(child2_1);
@@ -133,13 +144,16 @@ public class AdminController {
         Child child2_3 = new Child("权限管理","","fa fa-file-text-o","_self",sons5);
         children2.add(child2_3);
 
+        Child child2_4 = new Child("个人管理","","fa fa-file-text-o","_self",sons2);
+        children2.add(child2_3);
+
         /****  添加二级菜单 END ****/
 
-        MenuInfo menuInfo1 = new MenuInfo("功能模块管理","fa fa-address-book","","_self",children1);
+//        MenuInfo menuInfo1 = new MenuInfo("功能模块管理","fa fa-address-book","","_self",children1);
         MenuInfo menuInfo2 = new MenuInfo("职工模块管理","fa fa-address-book","","_self",children2);
 
 
-        menuInfos.add(menuInfo1);
+//        menuInfos.add(menuInfo1);
         menuInfos.add(menuInfo2);
 
 
@@ -166,7 +180,13 @@ public class AdminController {
      *      adminSearchByDatelineDir    根据生产截止日期搜索申请单     apply/searchdate
      *      adminSearchByIdDir          根据申请单Id搜索
      *      adminSearchDir              根据条件搜索指定的申请单       apply/search
-     *
+     *      adminApplyAddDir            添加申请单                  apply/add
+     *      adminApplySaveDir           监听保存                    apply/save
+     *      adminApplySubmitDir         监听提交                    apply/submit
+     *      adminApplyDeleteDir         监听删除（多个删）            apply/delete
+     *      adminApplyDeleteOneDir      监听删除单个                 apply/deleteOne
+     *      adminApplyDetailDir         监听详情                    apply/detail
+     *      adminApplyEitDir            监听编辑                    apply/edit
      *
      * @return 相应页面
      */
@@ -190,6 +210,19 @@ public class AdminController {
         List<Requisition> applyList = requisitionimpl.findAll();
         mv.addObject("applyList",applyList);
 
+        mv.addObject("adminApplyAddDir","apply/add");
+
+        mv.addObject("adminApplySaveDir"," apply/save");
+
+        mv.addObject("adminApplySubmitDir","apply/submit");
+
+        mv.addObject("adminApplyDeleteDir","apply/delete");
+
+        mv.addObject("adminApplyDeleteOneDir","apply/deleteOne");
+
+        mv.addObject("adminApplyDetailDir","apply/detail");
+
+        mv.addObject("adminApplyEitDir","apply/edit");
 
 
         mv.setViewName("static/page/admin/apply");
@@ -464,23 +497,765 @@ public class AdminController {
     }
 
 
+    //adminApplyAddDir            添加申请单                  apply/add
+    @RequestMapping(value = "admin/apply/add")
+    private ModelAndView applyAdd(){
+        System.out.println("进入------applyAdd");
+        ModelAndView mv = new ModelAndView();
+
+        mv.setViewName("static/page/admin/applying");
+
+        //响应原料
+        List<Material> mainIngredients = materialimpl.findAllByState(1);
+        mv.addObject("mainIngredients",mainIngredients);
+        List<Material> ingredients = materialimpl.findAllByState(0);
+        mv.addObject("ingredients",ingredients);
+
+        //标记添加
+        mv.addObject("state",0);
+
+        //响应用户名
+        mv.addObject("username","admin");
+        return mv;
+    }
+
+    //adminApplySave              监听保存                    apply/save
+    @RequestMapping(value = "admin/apply/save",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject applySave(@RequestBody Map param) {
+        System.out.println("进入---applySave");
+
+        //返回结果
+        Result result = new Result();
+        try{
+
+            if(param.get("requisitionid").toString().isEmpty()){//未保存申清单
+                /**
+                 * 创建配送表
+                 */
+                Distribution distribution = new Distribution();
+
+                Position positionTemp = positionimpl.getOne(Long.parseLong("4"));//4:代表配送人员
+                List<Employee> employeeTempList = employeeimpl.findByPosition(positionTemp);
+                Random random = new Random();
+                int anInt = random.nextInt(employeeTempList.size());
+                distribution.setEmployee(employeeTempList.get(anInt));//保存订单不分配配送人员
+
+                /**
+                 * 创建申请表
+                 */
+                Requisition requisition = new Requisition();
+                Employee employee = employeeimpl.findByUsername(param.get("username").toString());
+                requisition.setEmployee(employee);
+
+                requisition.setDate(new Date());
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                requisition.setDateline(format.parse(param.get("dateline").toString()));
+                requisition.setState(0);
+                requisition.setDistribution(distribution);
+
+                distribution.setRequisition(requisition);
+                Requisition save = requisitionimpl.save(requisition);
+
+                /**
+                 *
+                 * 创建主料信息
+                 */
+                //原料0
+                String material0Id = (String) param.get("zhuliao0");
+                String mainIngredient0number = (String) param.get("zhuliao0number");
+                MainIngredient mainIngredient0 = new MainIngredient(
+                        Double.parseDouble(mainIngredient0number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(material0Id)));
+                //保存到数据库
+                mainIngredientimpl.save(mainIngredient0);
+                //原料1
+                String material1Id = (String) param.get("zhuliao1");
+                String mainIngredient1number = (String) param.get("zhuliao1number");
+                MainIngredient mainIngredient1 = new MainIngredient(
+                        Double.parseDouble(mainIngredient1number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(material1Id)));
+                //保存到数据库
+                mainIngredientimpl.save(mainIngredient1);
+                //原料2
+                //原料1
+                String material2Id = (String) param.get("zhuliao2");
+                String mainIngredient2number = (String) param.get("zhuliao2number");
+                MainIngredient mainIngredient2 = new MainIngredient(
+                        Double.parseDouble(mainIngredient2number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(material2Id)));
+                //保存到数据库
+                mainIngredientimpl.save(mainIngredient2);
+                /**
+                 * 创建辅料信息
+                 */
+                //辅料0
+                String ingredient0id = (String) param.get("fuliao0");
+                String ingredient0number = (String) param.get("fuliao0number");
+                Ingredient ingredient0 = new Ingredient(
+                        Double.parseDouble(ingredient0number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(ingredient0id))
+                );
+                //保存到数据库
+                ingredientimpl.save(ingredient0);
+                //辅料1
+                String ingredient1id = (String) param.get("fuliao1");
+                String ingredient1number = (String) param.get("fuliao1number");
+                Ingredient ingredient1 = new Ingredient(
+                        Double.parseDouble(ingredient1number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(ingredient1id))
+                );
+                //保存到数据库
+                ingredientimpl.save(ingredient1);
+                //辅料2
+                String ingredient2id = (String) param.get("fuliao2");
+                String ingredient2number = (String) param.get("fuliao2number");
+                Ingredient ingredient2 = new Ingredient(
+                        Double.parseDouble(ingredient2number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(ingredient2id))
+                );
+                //保存到数据库
+                ingredientimpl.save(ingredient2);
+
+                /**
+                 * 创建返回信息
+                 */
+                result.setCode(0);
+                result.setMsg(save.getId().toString());
+            }else {
+                /*
+                    提交申请单
+                    1、更新配送表（主辅料表）
+                    2、更新申请单状态
+                 */
+                //获取申请单
+                Requisition requisition = requisitionimpl.getOne(Integer.parseInt(param.get("requisitionid").toString()));
+//            requisition.setState(1);
+                SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
+                Date dateline = format.parse(param.get("dateline").toString());
+                requisition.setDateline(format.parse(param.get("dateline").toString()));
+                //获取配送单
+                Distribution distribution = requisition.getDistribution();
+                //获取辅料
+                List<Ingredient> ingredients = distribution.getIngredient();
+                //更新辅料
+                //0
+                Ingredient ingredient0 = ingredients.get(0);
+                ingredient0.setDosage(Double.parseDouble((String) param.get("fuliao0number")));
+                ingredient0.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("fuliao0"))));
+                //1
+                Ingredient ingredient1 = ingredients.get(1);
+                ingredient1.setDosage(Double.parseDouble((String) param.get("fuliao1number")));
+                ingredient1.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("fuliao1"))));
+                //2
+                Ingredient ingredient2 = ingredients.get(2);
+                ingredient2.setDosage(Double.parseDouble((String) param.get("fuliao2number")));
+                ingredient2.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("fuliao2"))));
+                //保存辅料分配单
+                ingredientimpl.save(ingredient0);
+                ingredientimpl.save(ingredient1);
+                ingredientimpl.save(ingredient2);
+
+                //获取主料
+                List<MainIngredient> mainIngredients = distribution.getMainingredient();
+                //更新辅料
+                //0
+                MainIngredient mainIngredient0 = mainIngredients.get(0);
+                mainIngredient0.setDosage(Double.parseDouble((String) param.get("zhuliao0number")));
+                mainIngredient0.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("zhuliao0"))));
+                //1
+                MainIngredient mainIngredient1 = mainIngredients.get(1);
+                mainIngredient1.setDosage(Double.parseDouble((String) param.get("zhuliao1number")));
+                mainIngredient1.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("zhuliao1"))));
+                //2
+                MainIngredient mainIngredient2 = mainIngredients.get(2);
+                mainIngredient2.setDosage(Double.parseDouble((String) param.get("zhuliao2number")));
+                mainIngredient2.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("zhuliao2"))));
+                //保存辅料分配单
+                mainIngredientimpl.save(mainIngredient0);
+                mainIngredientimpl.save(mainIngredient1);
+                mainIngredientimpl.save(mainIngredient2);
+
+                //
+                requisitionimpl.save(requisition);
+                /**
+                 * 创建返回信息
+                 */
+                result.setCode(0);
+                result.setMsg(requisition.getId().toString());
+            }
+
+
+
+        }catch (Exception o){//失败
+            /**
+             * 创建返回信息
+             */
+            System.out.println("处理失败------applySave");
+            result.setCode(400);
+            result.setMsg("保存失败");
+        }
+
+        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(result);
+
+        return jsonObject;
+    }
+
+    //adminApplySubmitDir         监听提交                    apply/submit
+    @RequestMapping(value = "admin/apply/submit",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject applySubmit(@RequestBody Map param) {
+        System.out.println("进入---applySubmit");
+        //返回结果
+        Result result = new Result();
+        try{
+
+            if(param.get("requisitionid").toString().isEmpty()){//未保存申清单
+                /**
+                 * 创建配送表
+                 */
+                Distribution distribution = new Distribution();
+                Position positionTemp = positionimpl.getOne(Long.parseLong("4"));//4:代表配送人员
+                List<Employee> employeeTempList = employeeimpl.findByPosition(positionTemp);
+                Random random = new Random();
+                int anInt = random.nextInt(employeeTempList.size());
+                distribution.setEmployee(employeeTempList.get(anInt));//保存订单不分配配送人员
+
+
+                /**
+                 * 创建申请表
+                 */
+                Requisition requisition = new Requisition();
+                Employee employee = employeeimpl.findByUsername(param.get("username").toString());
+                requisition.setEmployee(employee);
+                SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
+                requisition.setDateline(format.parse(param.get("dateline").toString()));
+                requisition.setDate(new Date());
+                requisition.setState(1);
+                requisition.setDistribution(distribution);
+
+                distribution.setRequisition(requisition);
+                Requisition save = requisitionimpl.save(requisition);
+
+                /**
+                 *
+                 * 创建主料信息
+                 */
+                //原料0
+                String material0Id = (String) param.get("zhuliao0");
+                String mainIngredient0number = (String) param.get("zhuliao0number");
+                MainIngredient mainIngredient0 = new MainIngredient(
+                        Double.parseDouble(mainIngredient0number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(material0Id)));
+                //保存到数据库
+                mainIngredientimpl.save(mainIngredient0);
+                //原料1
+                String material1Id = (String) param.get("zhuliao1");
+                String mainIngredient1number = (String) param.get("zhuliao1number");
+                MainIngredient mainIngredient1 = new MainIngredient(
+                        Double.parseDouble(mainIngredient1number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(material1Id)));
+                //保存到数据库
+                mainIngredientimpl.save(mainIngredient1);
+                //原料2
+                //原料1
+                String material2Id = (String) param.get("zhuliao2");
+                String mainIngredient2number = (String) param.get("zhuliao2number");
+                MainIngredient mainIngredient2 = new MainIngredient(
+                        Double.parseDouble(mainIngredient2number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(material2Id)));
+                //保存到数据库
+                mainIngredientimpl.save(mainIngredient2);
+                /**
+                 * 创建辅料信息
+                 */
+                //辅料0
+                String ingredient0id = (String) param.get("fuliao0");
+                String ingredient0number = (String) param.get("fuliao0number");
+                Ingredient ingredient0 = new Ingredient(
+                        Double.parseDouble(ingredient0number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(ingredient0id))
+                );
+                //保存到数据库
+                ingredientimpl.save(ingredient0);
+                //辅料1
+                String ingredient1id = (String) param.get("fuliao1");
+                String ingredient1number = (String) param.get("fuliao1number");
+                Ingredient ingredient1 = new Ingredient(
+                        Double.parseDouble(ingredient1number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(ingredient1id))
+                );
+                //保存到数据库
+                ingredientimpl.save(ingredient1);
+                //辅料2
+                String ingredient2id = (String) param.get("fuliao2");
+                String ingredient2number = (String) param.get("fuliao2number");
+                Ingredient ingredient2 = new Ingredient(
+                        Double.parseDouble(ingredient2number),
+                        distribution,
+                        materialimpl.getOne(Integer.parseInt(ingredient2id))
+                );
+                //保存到数据库
+                ingredientimpl.save(ingredient2);
+
+                /**
+                 * 创建返回信息
+                 */
+                result.setCode(0);
+                result.setMsg(save.getId().toString());
+            }else {
+                /*
+                    提交申请单
+                    1、更新配送表（主辅料表）
+                    2、更新申请单状态
+                 */
+                //获取申请单
+                Requisition requisition = requisitionimpl.getOne(Integer.parseInt(param.get("requisitionid").toString()));
+                requisition.setState(1);
+                SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
+                requisition.setDateline(format.parse(param.get("dateline").toString()));
+                //获取配送单
+                Distribution distribution = requisition.getDistribution();
+                //获取辅料
+                List<Ingredient> ingredients = distribution.getIngredient();
+                //更新辅料
+                //0
+                Ingredient ingredient0 = ingredients.get(0);
+                ingredient0.setDosage(Double.parseDouble((String) param.get("fuliao0number")));
+                ingredient0.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("fuliao0"))));
+                //1
+                Ingredient ingredient1 = ingredients.get(1);
+                ingredient1.setDosage(Double.parseDouble((String) param.get("fuliao1number")));
+                ingredient1.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("fuliao1"))));
+                //2
+                Ingredient ingredient2 = ingredients.get(2);
+                ingredient2.setDosage(Double.parseDouble((String) param.get("fuliao2number")));
+                ingredient2.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("fuliao2"))));
+                //保存辅料分配单
+                ingredientimpl.save(ingredient0);
+                ingredientimpl.save(ingredient1);
+                ingredientimpl.save(ingredient2);
+
+                //获取主料
+                List<MainIngredient> mainIngredients = distribution.getMainingredient();
+                //更新辅料
+                //0
+                MainIngredient mainIngredient0 = mainIngredients.get(0);
+                mainIngredient0.setDosage(Double.parseDouble((String) param.get("zhuliao0number")));
+                mainIngredient0.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("zhuliao0"))));
+                //1
+                MainIngredient mainIngredient1 = mainIngredients.get(1);
+                mainIngredient1.setDosage(Double.parseDouble((String) param.get("zhuliao1number")));
+                mainIngredient1.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("zhuliao1"))));
+                //2
+                MainIngredient mainIngredient2 = mainIngredients.get(2);
+                mainIngredient2.setDosage(Double.parseDouble((String) param.get("zhuliao2number")));
+                mainIngredient2.setMaterial(materialimpl.getOne(Integer.parseInt((String) param.get("zhuliao2"))));
+                //保存辅料分配单
+                mainIngredientimpl.save(mainIngredient0);
+                mainIngredientimpl.save(mainIngredient1);
+                mainIngredientimpl.save(mainIngredient2);
+
+                //
+                Requisition save = requisitionimpl.save(requisition);
+                /**
+                 * 创建返回信息
+                 */
+                result.setCode(0);
+                result.setMsg(save.getId().toString());
+            }
+
+
+
+        }catch (Exception o){//失败
+            /**
+             * 创建返回信息
+             */
+            System.out.println("处理失败------applySubmit");
+            result.setCode(400);
+            result.setMsg("保存失败");
+        }
+
+        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(result);
+
+        return jsonObject;
+    }
+
+
+    //adminApplyDeleteDir         监听删除（多个删）            apply/delete   /admin/apply/delete
+    @RequestMapping(value = "admin/apply/delete",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject applyDelete(@RequestBody List<AdminTable> adminTableList) {
+        System.out.println("进入---applyDelete");
+
+        AdminTable adminTable = null;
+        JSONObject jsonObject = null;
+        try {
+            for (int index = 0; index < adminTableList.size(); index++) {
+                adminTable = adminTableList.get(index);
+                requisitionimpl.deleteById(adminTable.getId());
+            }
+            jsonObject = (JSONObject) JSONObject.toJSON(new Result(0, "删除成功"));
+        } catch (Exception e) {
+            jsonObject = (JSONObject) JSONObject.toJSON(new Result(400, "删除失败"));
+        }
+        return jsonObject;
+
+    }
+
+    //adminApplyDeleteOneDir      监听删除单个                 apply/deleteOne
+    @RequestMapping(value = "admin/apply/deleteOne",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject applyDeleteOne(@RequestBody AdminTable adminTable) {
+        System.out.println("进入---applyDeleteOne");
+        JSONObject jsonObject = null;
+        try {
+            requisitionimpl.deleteById(adminTable.getId());
+            jsonObject = (JSONObject) JSONObject.toJSON(new Result(0,"删除成功"));
+        }catch (Exception e){
+            jsonObject = (JSONObject) JSONObject.toJSON(new Result(400,"删除失败"));
+        }
+        return jsonObject;
+
+    }
+
+    //adminApplyDetailDir         监听详情                    apply/detail
+    @RequestMapping("admin/apply/detail")
+    private ModelAndView applyDetail(String id,String v){
+        System.out.println("进入------applyDetail");
+        ModelAndView mv = new ModelAndView();
+
+        Requisition requisition = requisitionimpl.getOne(Integer.parseInt(id));
+
+        Integer requisitionId = requisition.getId();
+        mv.addObject("requisitionId",requisitionId);
+
+        Date dateline = requisition.getDateline();
+        String s = dateline.toString();
+        mv.addObject("dateline",dateline);
+
+        Distribution distribution = requisition.getDistribution();
+        List<Ingredient> ingredientSelects = distribution.getIngredient();
+        Ingredient ingredient0 = ingredientSelects.get(0);
+        Ingredient ingredient1 = ingredientSelects.get(1);
+        Ingredient ingredient2 = ingredientSelects.get(2);
+        mv.addObject("ingredient0id",ingredient0.getMaterial().getId());
+        mv.addObject("ingredient0number",ingredient0.getDosage());
+        mv.addObject("ingredient1id",ingredient1.getMaterial().getId());
+        mv.addObject("ingredient1number",ingredient1.getDosage());
+        mv.addObject("ingredient2id",ingredient2.getMaterial().getId());
+        mv.addObject("ingredient2number",ingredient2.getDosage());
+
+
+        List<MainIngredient> mainingredientSelects = distribution.getMainingredient();
+        MainIngredient mainIngredient0 = mainingredientSelects.get(0);
+        MainIngredient mainIngredient1 = mainingredientSelects.get(1);
+        MainIngredient mainIngredient2 = mainingredientSelects.get(2);
+        mv.addObject("mainIngredient0id",mainIngredient0.getMaterial().getId());
+        mv.addObject("mainIngredient0number",mainIngredient0.getDosage());
+        mv.addObject("mainIngredient1id",mainIngredient1.getMaterial().getId());
+        mv.addObject("mainIngredient1number",mainIngredient1.getDosage());
+        mv.addObject("mainIngredient2id",mainIngredient2.getMaterial().getId());
+        mv.addObject("mainIngredient2number",mainIngredient2.getDosage());
+
+
+
+        List<Material> mainIngredients = materialimpl.findAllByState(1);
+//        System.out.println(mainIngredients);
+        mv.addObject("mainIngredients",mainIngredients);
+
+        List<Material> ingredients = materialimpl.findAllByState(0);
+//        System.out.println(ingredients);
+        mv.addObject("ingredients",ingredients);
+
+        mv.addObject("state",1);
+
+        mv.setViewName("static/page/admin/applying");
+        return mv;
+    }
+
+
+
+
+    //adminApplyEitDir            监听编辑                    apply/edit
+
+
+
+
+
+
+
+
+
     /**
+     * 模块说明：
+     *          1、查看职员的各种信息----职位-----个人信息------他们负责的订单
+     *          2、添加删除职员
+     *          3、角色管理----增删改查
      *
-     * @return
+     * 本函数功能说明：
+     *          返回数据表格
+     *
+     * 页面响应数据:
+     *      adminEmployeeTableDir       员工数据表格的请求地址        employee/table
+     *      adminAddEmployeeDir         响应员工添加页面             employee/add
+     *      adminAddEmployeeStepFirDir  保存主要信息                 employee/stepFir
+     *      adminAddEmployeeStepSecDir  保存个人信息                 employee/stepSec
+     *
+     *
+     *      adminSearchByIdDir          根据申请单Id搜索
+     *      adminSearchDir              根据条件搜索指定的申请单       apply/search
+     *      adminApplyAddDir            添加申请单                  apply/add
+     *      adminApplySaveDir           监听保存                    apply/save
+     *      adminApplySubmitDir         监听提交                    apply/submit
+     * @return 员工管理页面
      */
     @RequestMapping(value = "admin/employee/manage")
     private ModelAndView employeeManage(){
         System.out.println("进入-----employeeManage");
         ModelAndView mv = new ModelAndView();
+        mv.addObject("adminEmployeeTableDir","employee/table");
+
+        mv.addObject("adminAddEmployeeDir","employee/add");
+
+        mv.addObject("adminAddEmployeeStepSecDir","employee/stepSec");
 
         mv.setViewName("static/page/admin/employee");
 
         return mv;
     }
 
+   //adminEmployeeTableDir       员工数据表格的请求地址        employee/table
+   @RequestMapping(value = "admin/employee/table",method = RequestMethod.POST)
+   @ResponseBody
+   public JSONObject employeeTable(){
+       System.out.println("进入------employeeTable");
+
+       JSONObject jsonObject = new JSONObject();
+       EmployeeTableResult employeeTableResult = null;
+
+       try {
+           List<Employee> employeeList = employeeimpl.findAll();
+
+           if( employeeList.size()==0 ){
+               employeeTableResult = new EmployeeTableResult(404,"暂无职员信息",0,null);
+
+           }else {//有职员信息
+               List<EmployeeTable> employeeTableList = new ArrayList<EmployeeTable>();
+               for (Employee employee :employeeList){
+
+                   //获取职员的职位
+                   String positionString = "";
+                   String sexString = "";
+
+                   Set<Position> positionSet = employee.getPosition();
+                   for (Position position : positionSet) {
+                       positionString = positionString.concat(position.getName()+"/");
+                   }
+                   //消失上个步骤产生的额外字符
+                   positionString = positionString.substring(0, positionString.length() - 1);
+
+                   if( employee.getEmployeeinformation().getSex()==0 ){
+                       sexString = "男";
+                   }else {
+                       sexString = "女";
+                   }
+
+                   EmployeeTable employeeTable = new EmployeeTable(
+                           employee.getId(),
+                           employee.getUsername(),
+                           employee.getEmployeeinformation().getName(),
+                           sexString,
+                           positionString,
+                           employee.getEmployeeinformation().getPhone()
+
+                   );
+
+                   employeeTableList.add(employeeTable);
+
+
+               }
+               employeeTableResult = new EmployeeTableResult(0,"员工信息请求成功",employeeTableList.size(),employeeTableList);
+
+           }
+       }catch (Exception e){
+           System.out.println("处理失败------employeeTable");
+           employeeTableResult = new EmployeeTableResult(0,"员工信息请求失败",0,null);
+       }
+
+       jsonObject = (JSONObject) JSONObject.toJSON(employeeTableResult);
+
+       return jsonObject;
+   }
+
+   //adminAddEmployeeDir         响应员工添加页面             employee/add
+   @RequestMapping(value = "admin/employee/add")//添加用户响应页面
+   private ModelAndView employeeAdd(){
+       System.out.println("进入------employeeAdd");
+       ModelAndView mv = new ModelAndView();
+
+       mv.setViewName("static/page/admin/employeeing");
+       List<Position> positionList = positionimpl.findAll();
+       mv.addObject("positionList",positionList);
+
+       mv.addObject("adminAddEmployeeStepFirDir","employee/stepFir");
+
+       mv.addObject("adminAddEmployeeStepSecDir","employee/stepSec");
+
+       //标记添加
+       mv.addObject("state",0);
+
+       //响应用户名
+       mv.addObject("username","admin");
+       return mv;
+   }
+
+   //adminAddEmployeeStepFirDir  保存主要信息                 employee/stepFir
+    @RequestMapping(value = "admin/employee/stepFir")
+    @ResponseBody
+    private JSONObject employeeStepFir(
+            @RequestBody Map param,//username: "1", new_password: "111111", again_password: "111111"
+            HttpServletRequest httpServletRequest){
+
+        System.out.println("进入------employeeStepFir");
+        JSONObject jsonObject = new JSONObject();
+        String username = param.get("username").toString();
+        String password = param.get("new_password").toString();
+        Employee employee = new Employee();
+        Result result = null;
+        Long employeeId = (Long) httpServletRequest.getSession().getAttribute("employeeId");
+
+
+
+
+//        try {
+            //判断用户名是否已存在
+            Boolean exit = employeeimpl.existsByUsername(username);
+            if(exit&&employeeId==null){
+                result = new Result(2,"该用户已存在");
+            }else {
+
+                if( employeeId!=null ){
+                    employee.setId(employeeId);
+                    Employee employee1 = employeeimpl.getOne(employeeId);
+                    PasswordEncoder encoder = new BCryptPasswordEncoder();
+                    employee1.setPassword(encoder.encode(password));
+                    employeeimpl.save(employee1);
+
+                }else {
+                    PasswordEncoder encoder = new BCryptPasswordEncoder();
+                    employee.setPassword(encoder.encode(password));
+                    employee.setUsername(username);
+                    employee.setCreatetime(new Date());
+                    employee.setLogintime(new Date());
+                    //四个true
+                    employee.setIscredentials(true);
+                    employee.setIsenable(true);
+                    employee.setIslock(true);
+                    employee.setIsexpired(true);
+
+                    EmployeeInformation employeeInformation = new EmployeeInformation();
+                    employeeInformation.setEmployee(employee);
+                    employee.setEmployeeinformation(employeeInformation);
+
+
+
+                    Set<Position> positionSet = new HashSet<Position>();
+                    employee.setPosition(new HashSet<Position>());
+
+
+                    Employee save = employeeimpl.save(employee);
+                    //将employee存入session中
+                    httpServletRequest.getSession().setAttribute("employeeId",save.getId());
+                }
+
+
+                result = new Result(0,"保存成功");
+            }
+
+
+//        }
+//        catch (Exception e){
+//            result = new Result(404,"服务器处理失败");
+//        }
+
+        jsonObject =  (JSONObject)JSONObject.toJSON(result);
+        return jsonObject;
+
+    }
+
+
+
+    //{name: "丁聪", position: "1", sex: "1", phone: "11111111", email: "111111",address}
+    //adminAddEmployeeStepSecDir  保存个人信息                 employee/stepSec
+    @RequestMapping(value = "admin/employee/stepSec")
+    @ResponseBody
+    public JSONObject employeeStepSec(
+            @RequestBody Map param,
+            HttpServletRequest httpServletRequest
+    ){
+        System.out.println("进入------employeeStepSec");
+
+        Result result = null;
+
+        try {
+            Long employeeId = (Long)httpServletRequest.getSession().getAttribute("employeeId");//获取ID
+
+            Employee employee = employeeimpl.getOne(employeeId);
+
+            Position position = positionimpl.getOne(Long.parseLong(param.get("position").toString()));
+            Set<Position> positionSet = employee.getPosition();
+            positionSet.add(position);
+            employee.setPosition(positionSet);
+
+
+
+            EmployeeInformation employeeinformation = employee.getEmployeeinformation();
+            employeeinformation.setName(param.get("name").toString());
+            employeeinformation.setAddress(param.get("address").toString());
+            employeeinformation.setPhone(param.get("phone").toString());
+            employeeinformation.setSex(Integer.parseInt(param.get("sex").toString()));
+
+            employeeinformationimpl.save(employeeinformation);
+
+            result = new Result(0,"个人信息添加成功");
+
+            httpServletRequest.getSession().removeAttribute("employeeId");//去除ID
+
+
+        }catch (Exception e){
+            System.out.println("处理失败------employeeStepSec");
+            result = new Result(404,"个人信息添加失败");
+        }
+
+        JSONObject jsonObject = (JSONObject) JSONObject.toJSON(result);
+        return jsonObject;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
-     *
+     *  权限管理
      * @return
      */
     @RequestMapping(value = "admin/permission/manage")

@@ -41,7 +41,7 @@ public class Position {
     }
 
     //所属员工
-    @ManyToMany(mappedBy = "position")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "position")
     private Set<Employee> employee;
 
 

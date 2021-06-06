@@ -12,4 +12,8 @@ public interface EmployeeImpl extends JpaRepository<Employee,Long> {
     Employee findByUsername(String username);
 
     List<Employee> findByPosition(Position position);
+
+    Employee findByUsernameNot(String username);
+
+    Boolean existsByUsername(String username);
 }

@@ -608,6 +608,7 @@ public class ApplyController {
 
 
 
+    //删除多个
     @RequestMapping(value = "applied/delete",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject delete(@RequestBody List<ApplyTable> applyTableList) {
