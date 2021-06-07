@@ -105,7 +105,7 @@
         </script>
 
 
-        <table class="layui-hide" id="adminTableId" lay-filter="currentTableFilter"></table>
+        <table class="layui-hide" id="employeeTableId" lay-filter="currentTableFilter"></table>
 
 <!--        <script type="text/html" id="buttonTpl">-->
 <!--            {{#  if(d.state == 0){ }}-->
@@ -220,7 +220,7 @@
 
         //表格设置
         table.render({
-            elem: '#adminTableId',
+            elem: '#employeeTableId',
             url: '[[${adminEmployeeTableDir}]]',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -266,7 +266,7 @@
         //     setTimeout(function(){
         //
         //         //执行搜索重载
-        //         table.reload('adminTableId', {
+        //         table.reload('employeeTableId', {
         //             url: '[[${adminSearchDir}]]'
         //             , page: {
         //                 curr: 1
@@ -308,112 +308,33 @@
                     content: content,
                 });
 
+                //监听完成按钮
+                $("#finishBtnId").click(function () {
 
-                //监听保存
-                form.on('submit(save)', function (data) {
-
-                    $.ajax({
-                        url:'[[${adminApplySaveDir}]]',
-                        type:'post',
-                        data:JSON.stringify(data.field),
-                        contentType : "application/json",
-                        beforeSend:function () {
-                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
-                        },
-                        success:function(data){
-                            if(data.code == 400){//失败
-                                //alert("失败")
-                                layer.msg("保存失败", {
-                                    icon: 5,//失败的表情
-                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
-                                });
-                                return;
-                            }else{
-                                layer.msg("保存成功", {//成功
-                                    icon: 6,//成功的表情
-                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
-                                });
-                                // console.log(data.msg);
-                                $("#requisitionid").val(data.msg);
-                            }
-                        },
-                        complete: function () {
-                            layer.close(this.layerIndex);
-                        },
-                    });
-                    // layer.parent.reload('adminTableId');
-
-
-                    var tabledata = table.cache["adminTableId"]; //获取现有数据
-
-                    tabledata.push({
-                        "id": tabledata[tabledata.length-1].id+1
-                        ,"dateline": data.field.dateline
-                        ,"date":  "2021-05-25T16:00:00.000+00:00"
-                        ,"state": data.field.state
-                        ,"state1": data.field.state
-                    })//添加数据,  字段名对应值.  不要初始值的话 留空即可.
-
-                    //下面表格需要重载一下 才会刷新显示.
-                    table.reload("adminTableId", {
-                        data: tabledata,
-                    })
-
-
+                    // //表单重置
+                    // var tabledata = table.cache["employeeTableId"]; //获取现有数据
+                    // tabledata.push({
+                    //     "id": tabledata[tabledata.length-1].id+1
+                    //     ,"dateline": data.field.dateline
+                    //     ,"date":  "2021-05-25T16:00:00.000+00:00"
+                    //     ,"state": data.field.state
+                    //     ,"state1": data.field.state
+                    // })//添加数据,  字段名对应值.  不要初始值的话 留空即可.
+                    //
+                    // //下面表格需要重载一下 才会刷新显示.
+                    // table.reload("employeeTableId", {
+                    //     data: tabledata,
+                    // })
+                    layer.close(index);
                     return false;
-                });
-
-
-                //监听提交
-                form.on('submit(saveBtn)', function (data) {
-                    $.ajax({
-                        url:'[[${adminApplySubmitDir}]]',
-                        type:'post',
-                        data:JSON.stringify(data.field),
-                        contentType : "application/json",
-                        beforeSend:function () {
-                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
-                        },
-                        success:function(data){
-                            if(data.code == 400){//失败
-                                layer.msg("提交失败", {
-                                    icon: 5,//失败的表情
-                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
-                                });
-                                return;
-                            }else{
-                                layer.msg("提交成功", {//成功
-                                    icon: 6,//成功的表情
-                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
-                                });
-
-                                //锁死表单选项
-                                $('.yuanliao').attr('disabled', 'disabled');
-                                $('.number').attr('disabled', 'disabled');
-                                $('#dateline').attr('disabled', 'disabled');
-                                $('.tijiao').attr('disabled', 'disabled');
-                                form.render('select');
-                            }
-                        },
-                        error:function (data) {
-                            alert("提交失败")
-                        },
-                        complete: function () {
-                            layer.close(this.layerIndex);
-                        },
-                    });
-                    layer.closeAll();
-                    table.reload('adminTableId');
-                    return false;
-                });
-
+                })
 
 
                 $(window).on("resize", function () {
                     layer.full(index);
                 });
             } else if (obj.event === 'delete') {  // 监听删除操作
-                var checkStatus = table.checkStatus('adminTableId')
+                var checkStatus = table.checkStatus('employeeTableId')
                     , data = checkStatus.data;
                 $.ajax({
                     url:"applied/delete",
@@ -442,7 +363,7 @@
                         layer.close(this.layerIndex);
                     },
                 });
-                table.reload('adminTableId');
+                table.reload('employeeTableId');
                 return false;
             } else if(obj.event === 'search'){
                 var flag = document.getElementById("searchBurId").hidden;

@@ -707,7 +707,7 @@ public class AdminController {
         return jsonObject;
     }
 
-    //adminApplySubmitDir         监听提交                    apply/submit
+    //adminApplySubmitDir         监听提交                    apply/submit    admin/applying/submit
     @RequestMapping(value = "admin/apply/submit",method = RequestMethod.POST)
     @ResponseBody
     public JSONObject applySubmit(@RequestBody Map param) {
@@ -986,11 +986,58 @@ public class AdminController {
     }
 
 
-
-
     //adminApplyEitDir            监听编辑                    apply/edit
+    @RequestMapping("admin/apply/edit")
+    private ModelAndView applyEdit(String id,String v){
+        System.out.println("进入------applyDetail");
+        ModelAndView mv = new ModelAndView();
+
+        Requisition requisition = requisitionimpl.getOne(Integer.parseInt(id));
+
+        Integer requisitionId = requisition.getId();
+        mv.addObject("requisitionId",requisitionId);
+
+        Date dateline = requisition.getDateline();
+        String s = dateline.toString();
+        mv.addObject("dateline",dateline);
+
+        Distribution distribution = requisition.getDistribution();
+        List<Ingredient> ingredientSelects = distribution.getIngredient();
+        Ingredient ingredient0 = ingredientSelects.get(0);
+        Ingredient ingredient1 = ingredientSelects.get(1);
+        Ingredient ingredient2 = ingredientSelects.get(2);
+        mv.addObject("ingredient0id",ingredient0.getMaterial().getId());
+        mv.addObject("ingredient0number",ingredient0.getDosage());
+        mv.addObject("ingredient1id",ingredient1.getMaterial().getId());
+        mv.addObject("ingredient1number",ingredient1.getDosage());
+        mv.addObject("ingredient2id",ingredient2.getMaterial().getId());
+        mv.addObject("ingredient2number",ingredient2.getDosage());
 
 
+        List<MainIngredient> mainingredientSelects = distribution.getMainingredient();
+        MainIngredient mainIngredient0 = mainingredientSelects.get(0);
+        MainIngredient mainIngredient1 = mainingredientSelects.get(1);
+        MainIngredient mainIngredient2 = mainingredientSelects.get(2);
+        mv.addObject("mainIngredient0id",mainIngredient0.getMaterial().getId());
+        mv.addObject("mainIngredient0number",mainIngredient0.getDosage());
+        mv.addObject("mainIngredient1id",mainIngredient1.getMaterial().getId());
+        mv.addObject("mainIngredient1number",mainIngredient1.getDosage());
+        mv.addObject("mainIngredient2id",mainIngredient2.getMaterial().getId());
+        mv.addObject("mainIngredient2number",mainIngredient2.getDosage());
+
+        List<Material> mainIngredients = materialimpl.findAllByState(1);
+//        System.out.println(mainIngredients);
+        mv.addObject("mainIngredients",mainIngredients);
+
+        List<Material> ingredients = materialimpl.findAllByState(0);
+//        System.out.println(ingredients);
+        mv.addObject("ingredients",ingredients);
+
+        mv.addObject("state",1);
+
+        mv.setViewName("static/page/admin/applying");
+        return mv;
+    }
 
 
 
@@ -1047,10 +1094,8 @@ public class AdminController {
 
        try {
            List<Employee> employeeList = employeeimpl.findAll();
-
            if( employeeList.size()==0 ){
                employeeTableResult = new EmployeeTableResult(404,"暂无职员信息",0,null);
-
            }else {//有职员信息
                List<EmployeeTable> employeeTableList = new ArrayList<EmployeeTable>();
                for (Employee employee :employeeList){

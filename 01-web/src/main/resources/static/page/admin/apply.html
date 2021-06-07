@@ -475,9 +475,9 @@
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'edit') {
 
-                console.log('[[${adminApplyDetailDir}]]'+'?id='+obj.data.id)
+                console.log('[[${adminApplyEitDir}]]'+'?id='+obj.data.id)
 
-                var content = miniPage.getHrefContent('[[${adminApplyDetailDir}]]'+'?id='+obj.data.id);
+                var content = miniPage.getHrefContent('[[${adminApplyEitDir}]]'+'?id='+obj.data.id);
                 var openWH = miniPage.getOpenWidthHeight();
                 var index = layer.open({
                     title: '编辑员工信息',
@@ -535,7 +535,7 @@
                 //监听提交
                 form.on('submit(saveBtn)', function(data) {
                     $.ajax({
-                        url:"applying/submit",
+                        url:'[[${adminApplySubmitDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",
