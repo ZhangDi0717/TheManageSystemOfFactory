@@ -187,6 +187,7 @@ public class AdminController {
      *      adminApplyDeleteOneDir      监听删除单个                 apply/deleteOne
      *      adminApplyDetailDir         监听详情                    apply/detail
      *      adminApplyEitDir            监听编辑                    apply/edit
+     *                                  监听
      *
      * @return 相应页面
      */
