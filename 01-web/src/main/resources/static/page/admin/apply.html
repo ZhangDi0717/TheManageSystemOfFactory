@@ -129,7 +129,6 @@
             {{#  } else if(d.state1 >= 1) { }}
             <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="detail">详情</a>
             {{#  } }}
-
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
         </script>
 
@@ -474,13 +473,10 @@
         //监听表格的工具
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'edit') {
-
-                console.log('[[${adminApplyEitDir}]]'+'?id='+obj.data.id)
-
                 var content = miniPage.getHrefContent('[[${adminApplyEitDir}]]'+'?id='+obj.data.id);
                 var openWH = miniPage.getOpenWidthHeight();
                 var index = layer.open({
-                    title: '编辑员工信息',
+                    title: '编辑申请单信息',
                     type: 1,
                     shade: 0.2,
                     maxmin:true,
@@ -494,7 +490,7 @@
                 form.on('submit(save)', function (data) {
 
                     $.ajax({
-                        url:"applying/save",
+                        url:'[[${adminApplySaveDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",
@@ -522,12 +518,24 @@
                             layer.close(this.layerIndex);
                         },
                     });
+                    // layer.parent.reload('adminTableId');
 
-                    obj.update({
-                        dateline:"2021-05-21 13:48:22.705000",
-                        state1:" <a class=\"layui-btn layui-btn-normal layui-btn-xs data-count-edit\" lay-event=\"edit\">编辑</a>" +
-                            "<a class=\"layui-btn layui-btn-xs layui-btn-danger data-count-delete\" lay-event=\"delete\">删除</a>",
-                    });//修改成功修改表格数据不进行跳转
+
+                    var tabledata = table.cache["adminTableId"]; //获取现有数据
+
+                    tabledata.push({
+                        "id": tabledata[tabledata.length-1].id+1
+                        ,"dateline": data.field.dateline
+                        ,"date":  "2021-05-25T16:00:00.000+00:00"
+                        ,"state": data.field.state
+                        ,"state1": data.field.state
+                    })//添加数据,  字段名对应值.  不要初始值的话 留空即可.
+
+                    //下面表格需要重载一下 才会刷新显示.
+                    table.reload("adminTableId", {
+                        data: tabledata,
+                    })
+
 
                     return false;
                 });
@@ -588,12 +596,12 @@
                 });
 
                 return false;
-            } else if (obj.event === 'detail') {
+            }else if (obj.event === 'detail') {
                 var content = miniPage.getHrefContent('[[${adminApplyDetailDir}]]'+'?id='+obj.data.id);
                 var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
-                    title: '申请单详情',
+                    title: '分配单详情',
                     type: 1,
                     shade: 0.2,
                     maxmin:true,
@@ -603,11 +611,12 @@
                     content: content,
                 });
 
-                //监听提交
-                //监听提交
-                form.on('submit(saveBtn)', function (data) {
+
+                //监听修改
+                form.on('submit(changeBtn)', function (data) {
+                    console.log(data.field);
                     $.ajax({
-                        url:'[[${adminApplySubmitDir}]]',
+                        url:'[[${adminApplyChangeDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",
@@ -626,12 +635,7 @@
                                     icon: 6,//成功的表情
                                     time: 1000 //1秒关闭（如果不配置，默认是3秒）
                                 });
-                                //锁死表单选项
-                                $('.yuanliao').attr('disabled', 'disabled');
-                                $('.number').attr('disabled', 'disabled');
-                                $('#dateline').attr('disabled', 'disabled');
-                                $('.tijiao').attr('disabled', 'disabled');
-                                form.render('select');
+
                                 layer.close(index);
                             }
                         },

@@ -1,0 +1,226 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main" align="center">
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>分配单详情</legend>
+        </fieldset>
+
+        <form class="layui-form" action="">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">分配单Id</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" name="distributionId" class="layui-input" th:value="${distribution.getId()}" disabled>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">配送员</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="distributionMan" class="distributionMan" required lay-verify="required" id="distributionMan">
+                            <option value=""></option>
+                            <option value="" th:each="employee:${employeeList}" th:value="${employee.getId()}" th:text="${employee.getUsername()}" ></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>主料选择</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料1</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="zhuliao0" class="yuanliao" required lay-verify="required" id="select01">
+                            <option value=""></option>
+                            <option value="" th:each="mainIngredient:${mainIngredientList}" th:value="${mainIngredient.getId()}" th:text="${mainIngredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="zhuliao0number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number01">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料2</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="zhuliao1" class="yuanliao" required lay-verify="required" id="select02">
+                            <option value=""></option>
+                            <option value="" th:each="mainIngredient:${mainIngredientList}" th:value="${mainIngredient.getId()}" th:text="${mainIngredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="zhuliao1number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number02">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料3</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="zhuliao2" class="yuanliao" required lay-verify="required" id="select03">
+                            <option value=""></option>
+                            <option value="" th:each="mainIngredient:${mainIngredientList}" th:value="${mainIngredient.getId()}" th:text="${mainIngredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="zhuliao2number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number03">
+                    </div>
+                </div>
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>辅料选择</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料1</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="fuliao0" class="yuanliao" required lay-verify="required" id="select11">
+                            <option value=""></option>
+                            <option value="" th:each="ingredient:${ingredientList}" th:value="${ingredient.getId()}" th:text="${ingredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="fuliao0number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number11">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料2</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="fuliao1" class="yuanliao" required lay-verify="required" id="select12">
+                            <option value=""></option>
+                            <option value="" th:each="ingredient:${ingredientList}" th:value="${ingredient.getId()}" th:text="${ingredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number"  name="fuliao1number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number12">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料3</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="fuliao2" class="yuanliao" required lay-verify="required" id="select13">
+                            <option value=""></option>
+                            <option value="" th:each="ingredient:${ingredientList}" th:value="${ingredient.getId()}" th:text="${ingredient.getName()}" ></option>
+                        </select>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="number" name="fuliao2number" required lay-verify="required" placeholder="请输入数量" autocomplete="off" class="layui-input number" id="number13">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend></legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit  lay-filter="changeBtn">修改</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate
+            , $ = layui.jquery;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+
+
+
+        //申请人
+        var distributionMan = 'dd[lay-value=' + [[${distribution.getEmployee().getId()}]] + ']';
+        $('#distributionMan').siblings("div.layui-form-select").find('dl').find(distributionMan).click();
+
+
+        //主料id; 数量
+        var select01 = 'dd[lay-value=' + [[${selectMainIngredientList[0].getMaterial().getId}]] + ']';
+        $('#select01').siblings("div.layui-form-select").find('dl').find(select01).click();
+        $("#number01").val([[${selectMainIngredientList[0].getDosage()}]]);
+
+        var select02 = 'dd[lay-value=' + [[${selectMainIngredientList[1].getMaterial().getId()}]] + ']';
+        $('#select02').siblings("div.layui-form-select").find('dl').find(select02).click();
+        $("#number02").val([[${selectMainIngredientList[1].getDosage()}]]);
+
+        var select03 = 'dd[lay-value=' + [[${selectMainIngredientList[2].getMaterial().getId()}]] + ']';
+        $('#select03').siblings("div.layui-form-select").find('dl').find(select03).click();
+        $("#number03").val([[${selectMainIngredientList[2].getDosage()}]]);
+
+        //辅料id; 数量
+        var select11 = 'dd[lay-value=' + [[${selectIngredientList[0].getMaterial().getId()}]] + ']';
+        $('#select11').siblings("div.layui-form-select").find('dl').find(select11).click();
+        $("#number11").val([[${selectIngredientList[0].getDosage()}]]);
+
+        var select12 = 'dd[lay-value=' + [[${selectIngredientList[1].getMaterial().getId()}]] + ']';
+        $('#select12').siblings("div.layui-form-select").find('dl').find(select12).click();
+        $("#number12").val([[${selectIngredientList[1].getDosage()}]]);
+
+
+        var select13 = 'dd[lay-value=' + [[${selectIngredientList[2].getMaterial().getId()}]] + ']';
+        $('#select13').siblings("div.layui-form-select").find('dl').find(select13).click();
+        $("#number13").val([[${selectIngredientList[2].getDosage()}]]);
+
+
+    });
+</script>
