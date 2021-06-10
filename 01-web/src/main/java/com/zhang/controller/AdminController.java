@@ -7,8 +7,6 @@ import com.zhang.vo.PageInit;
 import com.zhang.vo.Result;
 import com.zhang.vo.adminTableResult.AdminTable;
 import com.zhang.vo.adminTableResult.AdminTableResult;
-import com.zhang.vo.applyTableResult.ApplyTable;
-import com.zhang.vo.applyTableResult.ApplyTableResult;
 import com.zhang.vo.employeeTableResult.EmployeeTable;
 import com.zhang.vo.employeeTableResult.EmployeeTableResult;
 import com.zhang.vo.initPage.*;
@@ -17,10 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.ws.Action;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -145,12 +140,12 @@ public class AdminController {
         children2.add(child2_3);
 
         Child child2_4 = new Child("个人管理","","fa fa-file-text-o","_self",sons2);
-        children2.add(child2_3);
+        children2.add(child2_4);
 
         /****  添加二级菜单 END ****/
 
 //        MenuInfo menuInfo1 = new MenuInfo("功能模块管理","fa fa-address-book","","_self",children1);
-        MenuInfo menuInfo2 = new MenuInfo("职工模块管理","fa fa-address-book","","_self",children2);
+        MenuInfo menuInfo2 = new MenuInfo("管理模块","fa fa-address-book","","_self",children2);
 
 
 //        menuInfos.add(menuInfo1);
@@ -184,10 +179,12 @@ public class AdminController {
      *      adminApplySaveDir           监听保存                    apply/save
      *      adminApplySubmitDir         监听提交                    apply/submit
      *      adminApplyDeleteDir         监听删除（多个删）            apply/delete
+     *
      *      adminApplyDeleteOneDir      监听删除单个                 apply/deleteOne
-     *      adminApplyDetailDir         监听详情                    apply/detail
      *      adminApplyEitDir            监听编辑                    apply/edit
-     *                                  监听
+     *      adminApplyDetailDir         监听详情                    apply/detail
+     *      adminApplyChangeDir         监听修改                    apply/change
+     *
      *
      * @return 相应页面
      */
@@ -211,19 +208,29 @@ public class AdminController {
         List<Requisition> applyList = requisitionimpl.findAll();
         mv.addObject("applyList",applyList);
 
+        //添加申请单按钮
         mv.addObject("adminApplyAddDir","apply/add");
 
+        //添加申请单页面的保存按钮
         mv.addObject("adminApplySaveDir"," apply/save");
 
+        //添加申请单页面的提交按钮
         mv.addObject("adminApplySubmitDir","apply/submit");
 
+        //多个删除按钮
         mv.addObject("adminApplyDeleteDir","apply/delete");
 
+        //单个删除按钮
         mv.addObject("adminApplyDeleteOneDir","apply/deleteOne");
 
+        //编辑按钮
+        mv.addObject("adminApplyEitDir","apply/edit");
+
+        //详情按钮
         mv.addObject("adminApplyDetailDir","apply/detail");
 
-        mv.addObject("adminApplyEitDir","apply/edit");
+        //修改按钮
+        mv.addObject("adminApplyChangeDir","apply/change");
 
 
         mv.setViewName("static/page/admin/apply");
@@ -276,7 +283,8 @@ public class AdminController {
                              @RequestParam(value = "dateStart",required = false,defaultValue = "") String dateStart,
                              @RequestParam(value = "dateEnd",required = false,defaultValue = "") String dateEnd,
                              @RequestParam(value = "datelineStart",required = false,defaultValue = "") String datelineStart,
-                             @RequestParam(value = "datelineEnd",required = false,defaultValue = "") String datelineEnd){
+                             @RequestParam(value = "datelineEnd",required = false,defaultValue = "") String datelineEnd)
+    {
         System.out.println("进入------search");
         int flag = 1;
         JSONObject jsonObject = new JSONObject();
@@ -931,61 +939,6 @@ public class AdminController {
 
     }
 
-    //adminApplyDetailDir         监听详情                    apply/detail
-    @RequestMapping("admin/apply/detail")
-    private ModelAndView applyDetail(String id,String v){
-        System.out.println("进入------applyDetail");
-        ModelAndView mv = new ModelAndView();
-
-        Requisition requisition = requisitionimpl.getOne(Integer.parseInt(id));
-
-        Integer requisitionId = requisition.getId();
-        mv.addObject("requisitionId",requisitionId);
-
-        Date dateline = requisition.getDateline();
-        String s = dateline.toString();
-        mv.addObject("dateline",dateline);
-
-        Distribution distribution = requisition.getDistribution();
-        List<Ingredient> ingredientSelects = distribution.getIngredient();
-        Ingredient ingredient0 = ingredientSelects.get(0);
-        Ingredient ingredient1 = ingredientSelects.get(1);
-        Ingredient ingredient2 = ingredientSelects.get(2);
-        mv.addObject("ingredient0id",ingredient0.getMaterial().getId());
-        mv.addObject("ingredient0number",ingredient0.getDosage());
-        mv.addObject("ingredient1id",ingredient1.getMaterial().getId());
-        mv.addObject("ingredient1number",ingredient1.getDosage());
-        mv.addObject("ingredient2id",ingredient2.getMaterial().getId());
-        mv.addObject("ingredient2number",ingredient2.getDosage());
-
-
-        List<MainIngredient> mainingredientSelects = distribution.getMainingredient();
-        MainIngredient mainIngredient0 = mainingredientSelects.get(0);
-        MainIngredient mainIngredient1 = mainingredientSelects.get(1);
-        MainIngredient mainIngredient2 = mainingredientSelects.get(2);
-        mv.addObject("mainIngredient0id",mainIngredient0.getMaterial().getId());
-        mv.addObject("mainIngredient0number",mainIngredient0.getDosage());
-        mv.addObject("mainIngredient1id",mainIngredient1.getMaterial().getId());
-        mv.addObject("mainIngredient1number",mainIngredient1.getDosage());
-        mv.addObject("mainIngredient2id",mainIngredient2.getMaterial().getId());
-        mv.addObject("mainIngredient2number",mainIngredient2.getDosage());
-
-
-
-        List<Material> mainIngredients = materialimpl.findAllByState(1);
-//        System.out.println(mainIngredients);
-        mv.addObject("mainIngredients",mainIngredients);
-
-        List<Material> ingredients = materialimpl.findAllByState(0);
-//        System.out.println(ingredients);
-        mv.addObject("ingredients",ingredients);
-
-        mv.addObject("state",1);
-
-        mv.setViewName("static/page/admin/applying");
-        return mv;
-    }
-
 
     //adminApplyEitDir            监听编辑                    apply/edit
     @RequestMapping("admin/apply/edit")
@@ -1040,9 +993,115 @@ public class AdminController {
         return mv;
     }
 
+    //adminApplyDetailDir         监听详情                    apply/detail
+    @RequestMapping("admin/apply/detail")
+    private ModelAndView applyDetail(String id,String v){
+        System.out.println("进入------applyDetail");
+        ModelAndView mv = new ModelAndView();
+
+        Requisition requisition = requisitionimpl.getOne(Integer.parseInt(id));
+
+        //申请单
+        mv.addObject("requisition",requisition);
+
+        //分配单
+        Distribution distribution = requisition.getDistribution();
+        mv.addObject("distribution",distribution);
+
+        //主料
+        List<Material> mainIngredientList = materialimpl.findAllByState(1);
+        mv.addObject("mainIngredientList",mainIngredientList);
+
+        //辅料
+        List<Material> ingredientList = materialimpl.findAllByState(0);
+        mv.addObject("ingredientList",ingredientList);
+
+        //所选主料
+        List<MainIngredient> selectMainIngredientList = distribution.getMainingredient();
+        mv.addObject("selectMainIngredientList",selectMainIngredientList);
+
+        //所选辅料
+        List<Ingredient> selectIngredientList = distribution.getIngredient();
+        mv.addObject("selectIngredientList",selectIngredientList);
+
+        //配送员
+        Position position = positionimpl.getOne(Long.parseLong("3"));
+        List<Employee> employeeList = employeeimpl.findByPosition(position);
+        mv.addObject("employeeList",employeeList);
+
+        mv.setViewName("static/page/admin/apply-detail");
+        return mv;
+    }
 
 
+    //adminApplyChangeDir         监听修改                    apply/change
+    @RequestMapping(value = "admin/apply/change",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject applyChange(@RequestBody Map param){
+        System.out.println("go into applyChange");
+        JSONObject jsonObject = null;
 
+        try {
+            Distribution distribution = distributionimpl.getOne(Integer.parseInt(param.get("distributionId").toString()));
+            //更新配送员
+            Employee employee = employeeimpl.getOne(Long.parseLong(param.get("distributionMan").toString()));
+            distribution.setEmployee(employee);//更新配送员
+            //更新主料表
+            List<MainIngredient> newMainIngredientList = new ArrayList<MainIngredient>();
+            List<MainIngredient> mainIngredientList = distribution.getMainingredient();
+
+            MainIngredient mainIngredient0 = mainIngredientList.get(0);
+            mainIngredient0.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("zhuliao0").toString())));//种类
+            mainIngredient0.setDosage(Double.parseDouble(param.get("zhuliao0number").toString()));
+            newMainIngredientList.add(mainIngredient0);
+
+            MainIngredient mainIngredient1 = mainIngredientList.get(1);
+            mainIngredient1.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("zhuliao1").toString())));//种类
+            mainIngredient1.setDosage(Double.parseDouble(param.get("zhuliao1number").toString()));
+            newMainIngredientList.add(mainIngredient1);
+
+            MainIngredient mainIngredient2 = mainIngredientList.get(2);
+            mainIngredient2.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("zhuliao2").toString())));//种类
+            mainIngredient2.setDosage(Double.parseDouble(param.get("zhuliao2number").toString()));
+            newMainIngredientList.add(mainIngredient2);
+
+            distribution.setMainingredient(newMainIngredientList);//更新主料表
+
+            //更新辅料表
+            List<Ingredient> newIngredientList = new ArrayList<Ingredient>();
+            List<Ingredient> ingredientList = distribution.getIngredient();
+
+            Ingredient ingredient0 = ingredientList.get(0);
+            ingredient0.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("fuliao0").toString())));
+            ingredient0.setDosage(Double.parseDouble(param.get("fuliao0number").toString()));
+            newIngredientList.add(ingredient0);
+
+            Ingredient ingredient1 = ingredientList.get(1);
+            ingredient1.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("fuliao1").toString())));
+            ingredient1.setDosage(Double.parseDouble(param.get("fuliao1number").toString()));
+            newIngredientList.add(ingredient1);
+
+            Ingredient ingredient2 = ingredientList.get(2);
+            ingredient2.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("fuliao2").toString())));
+            ingredient2.setDosage(Double.parseDouble(param.get("fuliao2number").toString()));
+            newIngredientList.add(ingredient2);
+
+            distribution.setIngredient(newIngredientList);//更新辅料表
+
+            distributionimpl.save(distribution);
+
+            Result result = new Result(0, "修改成功");
+
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+        } catch (Exception e){
+            System.out.println("applyChange processing failed");
+            Result result = new Result(404, "修改失败");
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+            System.out.println(e.toString());
+        }
+
+        return jsonObject;
+    }
 
 
 
@@ -1058,8 +1117,15 @@ public class AdminController {
      * 页面响应数据:
      *      adminEmployeeTableDir       员工数据表格的请求地址        employee/table
      *      adminAddEmployeeDir         响应员工添加页面             employee/add
-     *      adminAddEmployeeStepFirDir  保存主要信息                 employee/stepFir
-     *      adminAddEmployeeStepSecDir  保存个人信息                 employee/stepSec
+     *      adminAddEmployeeStepFirDir  保存主要信息                employee/stepFir
+     *      adminAddEmployeeStepSecDir  保存个人信息                employee/stepSec
+     *      adminEmployeeSearchDir      搜索框                     employee/search
+     *      adminEmployeeDeleteMoreDir  删除多个                    employee/deleteMore
+     *      adminEmployeeDeleteOneDir   删除单个                    employee/deleteOne
+     *      adminEmployeeDetailDir      详情按钮                    employee/detail
+     *      adminEmployeeChangeBasicDir 修改员工基本信息              employee/changeBasic
+     *      adminEmployeeChangeMainDir  修改员工主要信息              employee/changeMain
+     *
      *
      *
      *      adminSearchByIdDir          根据申请单Id搜索
@@ -1078,6 +1144,17 @@ public class AdminController {
         mv.addObject("adminAddEmployeeDir","employee/add");
 
         mv.addObject("adminAddEmployeeStepSecDir","employee/stepSec");
+
+        mv.addObject("adminEmployeeSearchDir","employee/search");
+        List<Employee> employeeList = employeeimpl.findAll();
+        mv.addObject("employeeList",employeeList);
+        List<Position> positionList = positionimpl.findAll();
+        mv.addObject("positionList",positionList);
+
+        mv.addObject("adminEmployeeDeleteMoreDir","employee/deleteMore");
+        mv.addObject("adminEmployeeDeleteOneDir","employee/deleteOne");
+
+        mv.addObject("adminEmployeeDetailDir","employee/detail");
 
         mv.setViewName("static/page/admin/employee");
 
@@ -1249,8 +1326,7 @@ public class AdminController {
     @ResponseBody
     public JSONObject employeeStepSec(
             @RequestBody Map param,
-            HttpServletRequest httpServletRequest
-    ){
+            HttpServletRequest httpServletRequest){
         System.out.println("进入------employeeStepSec");
 
         Result result = null;
@@ -1291,12 +1367,351 @@ public class AdminController {
 
 
 
+    //adminEmployeeSearchDir      搜索框                     employee/search
+    @RequestMapping(value = "admin/employee/search")
+    @ResponseBody
+    public JSONObject employeeSearch(
+            @RequestParam(value = "employeeId",required = false, defaultValue = "") String employeeId,
+            @RequestParam(value = "position",required = false,defaultValue = "") String positionId,
+            @RequestParam(value = "sex", required = false, defaultValue = "") String sex,
+            @RequestParam(value = "username", required = false, defaultValue = "") String username){
+        System.out.println("go into employeeSearch");
+
+        EmployeeTableResult employeeTableResult = new EmployeeTableResult();
+        List<EmployeeTable> employeeTableList = new ArrayList<EmployeeTable>();
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            boolean flag = true;
+
+            //employeeId 查询
+            if( !employeeId.isEmpty()){
+
+                List<EmployeeTable> tableList = new ArrayList<EmployeeTable>();
+
+                Employee employee = employeeimpl.getOne(Long.parseLong(employeeId));
+                Set<Position> positionSet = employee.getPosition();
+
+                //获取职员的职位
+                String positionString = "";
+                String sexString = "";
+
+                for (Position position : positionSet) {
+                    positionString = positionString.concat(position.getName()+"/");
+                }
+                //消失上个步骤产生的额外字符
+                positionString = positionString.substring(0, positionString.length() - 1);
+
+                if( employee.getEmployeeinformation().getSex()==0 ){
+                    sexString = "男";
+                }else {
+                    sexString = "女";
+                }
+
+                EmployeeTable employeeTable = new EmployeeTable(
+                        employee.getId(),
+                        employee.getUsername(),
+                        employee.getEmployeeinformation().getName(),
+                        sexString,
+                        positionString,
+                        employee.getEmployeeinformation().getPhone()
+
+                );
+                tableList.add(employeeTable);
+
+                if( flag ){//并集(先做差集再做添加所有）
+                    employeeTableList.removeAll(tableList); // bingList为 [1, 2]
+                    employeeTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = false;
+                }else {//交集
+                    employeeTableList.retainAll(tableList);
+                }
 
 
+            }
+
+            if( !positionId.isEmpty()){
+                List<EmployeeTable> tableList = new ArrayList<EmployeeTable>();
+
+                List<Employee> employeeList =  employeeimpl.findByPosition(positionimpl.getOne(Long.parseLong(positionId)));
 
 
+                for (Employee employee:employeeList){
+                    Set<Position> positionSet = employee.getPosition();
+
+                    //获取职员的职位
+                    String positionString = "";
+                    String sexString = "";
+
+                    for (Position position : positionSet) {
+                        positionString = positionString.concat(position.getName()+"/");
+                    }
+                    //消失上个步骤产生的额外字符
+                    positionString = positionString.substring(0, positionString.length() - 1);
+
+                    if( employee.getEmployeeinformation().getSex()==0 ){
+                        sexString = "男";
+                    }else {
+                        sexString = "女";
+                    }
+
+                    EmployeeTable employeeTable = new EmployeeTable(
+                            employee.getId(),
+                            employee.getUsername(),
+                            employee.getEmployeeinformation().getName(),
+                            sexString,
+                            positionString,
+                            employee.getEmployeeinformation().getPhone()
+
+                    );
+                    tableList.add(employeeTable);
+                }
+
+                if( flag ){//并集(先做差集再做添加所有）
+                    employeeTableList.removeAll(tableList); // bingList为 [1, 2]
+                    employeeTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = false;
+                }else {//交集
+                    employeeTableList.retainAll(tableList);
+                }
+            }
+
+            if( !sex.isEmpty()){
+                List<EmployeeInformation> employeeInformationList = employeeinformationimpl.findBySex(Integer.parseInt(sex));
+
+                List<EmployeeTable> tableList = new ArrayList<EmployeeTable>();
+                for (EmployeeInformation employeeInformation:employeeInformationList){
+                    Employee employee = employeeInformation.getEmployee();
+                    Set<Position> positionSet = employee.getPosition();
+
+                    //获取职员的职位
+                    String positionString = "";
+                    String sexString = "";
+
+                    for (Position position : positionSet) {
+                        positionString = positionString.concat(position.getName()+"/");
+                    }
+                    //消失上个步骤产生的额外字符
+                    positionString = positionString.substring(0, positionString.length() - 1);
+
+                    if( employee.getEmployeeinformation().getSex()==0 ){
+                        sexString = "男";
+                    }else {
+                        sexString = "女";
+                    }
+
+                    EmployeeTable employeeTable = new EmployeeTable(
+                            employee.getId(),
+                            employee.getUsername(),
+                            employee.getEmployeeinformation().getName(),
+                            sexString,
+                            positionString,
+                            employee.getEmployeeinformation().getPhone()
+
+                    );
+                    tableList.add(employeeTable);
+                }
+
+                if( flag ){//并集(先做差集再做添加所有）
+                    employeeTableList.removeAll(tableList); // bingList为 [1, 2]
+                    employeeTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = false;
+                }else {//交集
+                    employeeTableList.retainAll(tableList);
+                }
+            }
+
+            if( !username.isEmpty()){
+
+                List<EmployeeTable> tableList = new ArrayList<EmployeeTable>();
+
+                Employee employee = employeeimpl.findByUsername(username);
+                Set<Position> positionSet = employee.getPosition();
+
+                //获取职员的职位
+                String positionString = "";
+                String sexString = "";
+
+                for (Position position : positionSet) {
+                    positionString = positionString.concat(position.getName()+"/");
+                }
+                //消失上个步骤产生的额外字符
+                positionString = positionString.substring(0, positionString.length() - 1);
+
+                if( employee.getEmployeeinformation().getSex()==0 ){
+                    sexString = "男";
+                }else {
+                    sexString = "女";
+                }
+
+                EmployeeTable employeeTable = new EmployeeTable(
+                        employee.getId(),
+                        employee.getUsername(),
+                        employee.getEmployeeinformation().getName(),
+                        sexString,
+                        positionString,
+                        employee.getEmployeeinformation().getPhone()
+
+                );
+                tableList.add(employeeTable);
+
+                if( flag ){//并集(先做差集再做添加所有）
+                    employeeTableList.removeAll(tableList); // bingList为 [1, 2]
+                    employeeTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = false;
+                }else {//交集
+                    employeeTableList.retainAll(tableList);
+                }
+            }
+
+            employeeTableResult.setCode(0);
+            employeeTableResult.setCount(employeeTableList.size());
+            employeeTableResult.setMsg("查询成功");
+            employeeTableResult.setData(employeeTableList);
+
+            jsonObject = (JSONObject) JSONObject.toJSON(employeeTableResult);
+        }catch (Exception e){
+            System.out.println("employeeSearch processing failed");
+            jsonObject = (JSONObject) JSONObject.toJSON(new EmployeeTableResult(404,"查询错误",0,null));
+        }
 
 
+        return jsonObject;
+    }
+
+
+    //adminEmployeeDeleteMoreDir  删除多个                    employee/deleteMore  admin/employee/deleteMore
+    @RequestMapping(value = "admin/employee/deleteMore",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject employeeDeleteMore(@RequestBody List<EmployeeTable> employeeTableList){
+        System.out.println("go into employeeDeleteMore");
+        Result result = null;
+        try {
+            for (EmployeeTable employeeTable:employeeTableList){
+                Long employeeId = employeeTable.getEmployeeId();
+                Employee employee = employeeimpl.getOne(employeeId);
+                employeeimpl.delete(employee);
+            }
+
+            result = new Result(0,"删除成功");
+
+        }catch (Exception e){
+            System.out.println("employeeDeleteMore processing failed");
+            result = new Result(404,"删除失败");
+        }
+        return (JSONObject) JSONObject.toJSON(result);
+    }
+
+    //adminEmployeeDeleteOneDir   删除单个                    employee/deleteOne
+    @RequestMapping(value = "admin/employee/deleteOne",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject employeeDeleteOne(@RequestBody EmployeeTable employeeTable){
+        System.out.println("go into employeeDeleteOne");
+        Result result = null;
+        try {
+            Long employeeId = employeeTable.getEmployeeId();
+            Employee employee = employeeimpl.getOne(employeeId);
+            employeeimpl.delete(employee);
+            result = new Result(0,"删除成功");
+        }catch (Exception e){
+            System.out.println("employeeDeleteOne processing failed");
+            result = new Result(404,"删除失败");
+        }
+        return (JSONObject) JSONObject.toJSON(result);
+    }
+
+
+    //adminEmployeeDetailDir      详情按钮                    employee/detail
+    @RequestMapping(value = "admin/employee/detail")
+    @ResponseBody
+    public ModelAndView employeeDetail(String employeeId){
+
+        ModelAndView mv = new ModelAndView();
+
+        Employee employee = employeeimpl.getOne(Long.parseLong(employeeId));
+        EmployeeInformation employeeInformation = employee.getEmployeeinformation();
+        Set<Position> positionSet = employee.getPosition();
+        List<Position> positionList = positionimpl.findAll();
+
+        mv.addObject("employee",employee);
+        mv.addObject("employeeInformation",employeeInformation);
+        mv.addObject("positionSet",positionSet);
+        mv.addObject("positionList",positionList);
+
+        mv.addObject("adminEmployeeChangeBasicDir","employee/changeBasic");
+        mv.addObject("adminEmployeeChangeMainDir","employee/changeMain");
+
+        mv.setViewName("static/page/admin/employee-detail");
+        return mv;
+    }
+
+    //adminEmployeeChangeBasicDir 修改员工基本信息              employee/changeBasic
+    @RequestMapping(value = "admin/employee/changeBasic",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject employeeChangeBasic(@RequestBody Map param){
+
+        System.out.println("go into employeeChangeBasic");
+        JSONObject jsonObject = null;
+
+        try {
+            Employee employee = employeeimpl.getOne(Long.parseLong(param.get("employeeId").toString()));
+
+            if(param.get("isexpired")!=null)//账户过期
+                employee.setIsexpired(false);
+
+            if(param.get("islock")!=null)//账户被锁定
+                employee.setIslock(false);
+
+            if(param.get("iscredentials")==null)//账户凭证失效
+                employee.setIscredentials(false);
+
+            if (param.get("isenable")==null)//账户失能
+                employee.setIsenable(false);
+
+            employeeimpl.save(employee);
+            jsonObject = (JSONObject) JSONObject.toJSON(new Result(0,"修改成功"));
+
+        } catch (Exception e){
+            System.out.println("employeeChangeBasi processing failed");
+            System.out.println(e.toString());
+            jsonObject = (JSONObject) JSONObject.toJSON(new Result(404,"修改失败"));
+
+        }
+
+        return jsonObject;
+
+    }
+
+
+    //adminEmployeeChangeMainDir  修改员工主要信息              employee/changeMain
+    @RequestMapping(value = "admin/employee/changeMain",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject employeeChangeMain(@RequestBody Map param){
+        System.out.println("go into employeeChangeMain");
+        JSONObject jsonObject = null;
+        Employee employee = employeeimpl.getOne(Long.parseLong(param.get("employeeId").toString()));
+
+        //更新员工信息
+        EmployeeInformation employeeinformation = employee.getEmployeeinformation();
+        employeeinformation.setAddress(param.get("address").toString());
+        employeeinformation.setEmail(param.get("email").toString());
+        employeeinformation.setName(param.get("name").toString());
+        employeeinformation.setPhone(param.get("phone").toString());
+        employeeinformation.setSex(Integer.parseInt(param.get("sex").toString()));
+
+        Set<Position> newPositionSet = new HashSet<Position>();
+        newPositionSet.add(positionimpl.getOne(Long.parseLong(param.get("position").toString())));
+
+        employee.setPosition(newPositionSet);
+        employee.setEmployeeinformation(employeeinformation);
+
+        employeeimpl.save(employee);
+
+        Result result = new Result(0, "修改成功");
+
+
+        return (JSONObject) JSONObject.toJSON(result);
+    }
 
 
 

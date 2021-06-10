@@ -24,7 +24,13 @@ public class Distribution {
         this.ingredient = ingredient;
     }
 
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     @ManyToOne(optional = false)
     private Employee employee;

@@ -6,6 +6,7 @@ server:
 
 spring:
   datasource:
+    #    url: jdbc:mysql://localhost:3308/goodgoods?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&useSSL=false
     url: jdbc:mysql://localhost:3306/goodgoods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: root

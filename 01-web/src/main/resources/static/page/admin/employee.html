@@ -6,90 +6,58 @@
             <legend>搜索信息</legend>
             <div style="margin: 10px 10px 10px 10px">
 
-<!--                <form class="layui-form" action="">-->
+                <form class="layui-form" action="">
+                    <div class="layui-form-item">
 
-<!--                    <div class="layui-form-item">-->
-<!--                        <div class="layui-inline">-->
-<!--                            <label class="layui-form-label">申请员工</label>-->
-<!--                            <div class="layui-input-inline" style="width: 100px;">-->
-<!--                                <select name="appliedId" id="appliedId">-->
-<!--                                    <option value=""></option>-->
-<!--                                    <option value="" th:each="applied:${appliedList}" th:value="${applied.getId()}" th:text="${applied.getUsername()}" ></option>-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                        <div class="layui-inline">
+                            <label class="layui-form-label">员工编号</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="employeeId" id="employeeId">
+                                    <option value=""></option>
+                                    <option value="" th:each="employee:${employeeList}" th:value="${employee.getId()}" th:text="${employee.getId()}" ></option>
+                                </select>
+                            </div>
+                        </div>
 
-<!--                    <div class="layui-form-item">-->
-<!--                        <div class="layui-inline">-->
-<!--                            <label class="layui-form-label">配送员工</label>-->
-<!--                            <div class="layui-input-inline" style="width: 100px;">-->
-<!--                                <select name="deliverymanId"  id="deliverymanId">-->
-<!--                                    <option value=""></option>-->
-<!--                                    <option value="" th:each="deliveryman:${deliverymanList}" th:value="${deliveryman.getId()}" th:text="${deliveryman.getUsername()}" ></option>-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="username" id="usernameId">
+                                    <option value=""></option>
+                                    <option value="" th:each="employee:${employeeList}" th:value="${employee.getUsername()}" th:text="${employee.getUsername()}" ></option>
+                                </select>
+                            </div>
+                        </div>
 
-<!--                    <div class="layui-form-item">-->
-<!--                        <div class="layui-inline">-->
-<!--                            <label class="layui-form-label">申请单号</label>-->
-<!--                            <div class="layui-input-inline">-->
-<!--                                <select name="applyId" id="applyId" lay-search>-->
-<!--                                    <option value=""></option>-->
-<!--                                    <option value="" th:each="apply:${applyList}" th:value="${apply.getId()}" th:text="${apply.getId()}" ></option>-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                        </div>-->
-
-<!--                        <div class="layui-inline">-->
-<!--                            <label class="layui-form-label">审核状态</label>-->
-<!--                            <div class="layui-input-inline" autocomplete="off" style="width: 100px;">-->
-<!--                                <select name="applyState" >-->
-<!--                                    <option value=""></option>-->
-<!--                                    <option value="0">未提交</option>-->
-<!--                                    <option value="1">待审核</option>-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                        <div class="layui-inline">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="sex"  id="sexId">
+                                    <option value=""></option>
+                                    <option value="0" >男</option>
+                                    <option value="1" >女</option>
+                                </select>
+                            </div>
+                        </div>
 
 
-<!--                    <div class="layui-form-item">-->
-
-<!--                        <div class="layui-inline">-->
-<!--                            <label class="layui-form-label">生产日期</label>-->
-<!--                            <div class="layui-input-inline" style="width: 100px;">-->
-<!--                                <input type="text"  class="layui-input" id="dateStart" name="dateStart">-->
-<!--                            </div>-->
-<!--                            <div class="layui-form-mid">-</div>-->
-<!--                            <div class="layui-input-inline" style="width: 100px;">-->
-<!--                                <input type="text"  class="layui-input" id="dateEnd" name="dateEnd">-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-<!--                        <div class="layui-inline">-->
-<!--                            <label class="layui-form-label">截止日期</label>-->
-<!--                            <div class="layui-input-inline" style="width: 100px;">-->
-<!--                                <input type="text"  class="layui-input" id="datelineStart" name="datelineStart">-->
-<!--                            </div>-->
-<!--                            <div class="layui-form-mid">-</div>-->
-<!--                            <div class="layui-input-inline" style="width: 100px;">-->
-<!--                                <input type="text"  class="layui-input" id="datelineEnd" name="datelineEnd">-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--                    <div class="layui-form-item">-->
-<!--                        <div class="layui-inline">-->
-<!--                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="admin-search-btn"><i class="layui-icon"></i> 搜 索</button>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                        <div class="layui-inline">
+                            <label class="layui-form-label">员工职位</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="position"  id="positionId">
+                                    <option value=""></option>
+                                    <option value="" th:each="position:${positionList}" th:value="${position.getId()}" th:text="${position.getName()}" ></option>
+                                </select>
+                            </div>
+                        </div>
 
 
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="admin-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
 
-<!--                </form>-->
+                </form>
 
             </div>
         </fieldset>
@@ -99,31 +67,12 @@
                 <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
                 <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
                 <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="search"> 搜索 </button>
-
-                <a href="javascript:;" th:layuimini-content-href='${adminAddEmployeeDir}' data-title="基本资料" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" >基本资料</a>
             </div>
         </script>
 
 
         <table class="layui-hide" id="employeeTableId" lay-filter="currentTableFilter"></table>
 
-<!--        <script type="text/html" id="buttonTpl">-->
-<!--            {{#  if(d.state == 0){ }}-->
-<!--            <button class="layui-btn layui-btn-warm layui-btn-xs">未提交</button>-->
-<!--            {{#  } else if(d.state == 1) { }}-->
-<!--            <button class="layui-btn layui-btn-xs">待审批</button>&lt;!&ndash;审批人员还没有打开&ndash;&gt;-->
-<!--            {{#  } else if(d.state == 2) { }}-->
-<!--            <button class="layui-btn layui-btn-normal layui-btn-xs">审批中</button>&lt;!&ndash;审批人员打开但没有完成审批&ndash;&gt;-->
-<!--            {{#  } else if(d.state == 3) { }}-->
-<!--            <button class="layui-btn layui-btn-danger layui-btn-xs">已退回</button>&lt;!&ndash;审批不通过&ndash;&gt;-->
-<!--            {{#  } else if(d.state == 4) { }}-->
-<!--            <button class="layui-btn layui-btn-normal layui-btn-xs">配送中</button>&lt;!&ndash;审批已通过，原辅料配送中&ndash;&gt;-->
-<!--            {{#  } else if(d.state == 5) { }}-->
-<!--            <button class="layui-btn layui-btn-normal layui-btn-xs">生产中</button>-->
-<!--            {{#  } else if(d.state == 6) { }}-->
-<!--            <button class="layui-btn layui-btn-xs">已完成</button>-->
-<!--            {{#  } }}-->
-<!--        </script>-->
 
         <script type="text/html" id="currentTableBar">
 
@@ -142,80 +91,6 @@
             laydate = layui.laydate,
             miniPage = layui.miniPage;
         // alert("已加载")
-
-        // //执行一个laydate实例
-        // laydate.render({
-        //     elem: '#datelineStart' //指定元素
-        //     ,format: 'yyyy-MM-dd' //可任意组合
-        // });
-
-        //执行一个laydate实例
-        // laydate.render({
-        //     elem: '#datelineEnd' //指定元素
-        //     ,format: 'yyyy-MM-dd' //可任意组合
-        //
-        // });
-
-        //截止日期搜索控制--前输入框
-        // var start = laydate.render({
-        //     elem: '#datelineStart', //指定元素
-        //     format: 'yyyy-MM-dd', //可任意组合
-        //     type: 'date',
-        //     showBottom: false,
-        //     btns: ['clear', 'confirm'],
-        //     done: function(value, date){
-        //         endMax = end.config.max;
-        //         end.config.min = date;
-        //         end.config.min.month = date.month -1;
-        //     }
-        // });
-
-        //生产日期搜索控制--后输入框
-        // var end = laydate.render({
-        //     elem: '#datelineEnd', //指定元素
-        //     format: 'yyyy-MM-dd', //可任意组合
-        //     type: 'date',
-        //     showBottom: false,
-        //     done: function(value, date){
-        //         if($.trim(value) == ''){
-        //             var curDate = new Date();
-        //             date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
-        //         }
-        //         start.config.max = date;
-        //         start.config.max.month = date.month -1;
-        //     }
-        // })
-
-
-        //创建日期搜索控制--前输入框
-        // var datestart = laydate.render({
-        //     elem: '#dateStart', //指定元素
-        //     format: 'yyyy-MM-dd', //可任意组合
-        //     type: 'date',
-        //     showBottom: false,
-        //     btns: ['clear', 'confirm'],
-        //     done: function(value, date){
-        //         endMax = end.config.max;
-        //         dateend.config.min = date;
-        //         dateend.config.min.month = date.month -1;
-        //     }
-        // });
-
-        //创建日期搜索控制--后输入框
-        // var dateend = laydate.render({
-        //     elem: '#dateEnd', //指定元素
-        //     format: 'yyyy-MM-dd', //可任意组合
-        //     type: 'date',
-        //     showBottom: false,
-        //     done: function(value, date){
-        //         if($.trim(value) == ''){
-        //             var curDate = new Date();
-        //             date = {'date': curDate.getDate(), 'month': curDate.getMonth()+1, 'year': curDate.getFullYear()};
-        //         }
-        //         datestart.config.max = date;
-        //         datestart.config.max.month = date.month -1;
-        //     }
-        // })
 
 
         //表格设置
@@ -248,46 +123,34 @@
         });
 
         // 总监听按钮
-        // form.on('submit(admin-search-btn)', function (data) {
-        //     //
-        //     // console.log(data.field.datelineStart==data.field.datelineEnd);
-        //     // console.log(data.field.datelineStart);
-        //     // console.log(data.field.dateStart);
-        //     if( data.field.dateStart!=data.field.dateEnd && (data.field.dateStart==""||data.field.dateEnd=="")){//申请日期控制:前后不相等且有一个为空->提示错误
-        //         layer.msg("搜索日期填写不正确",{icon:5,time:500})
-        //         return false;
-        //     };
-        //     if( data.field.datelineStart!=data.field.datelineEnd && (data.field.datelineStart==""||data.field.datelineEnd=="") ){//生产日期控制:前后不相等且有一个为空->提示错误
-        //         layer.msg("搜索日期填写不正确",{icon:5,time:500})
-        //         return false;
-        //     };
-        //
-        //     var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
-        //     setTimeout(function(){
-        //
-        //         //执行搜索重载
-        //         table.reload('employeeTableId', {
-        //             url: '[[${adminSearchDir}]]'
-        //             , page: {
-        //                 curr: 1
-        //             }
-        //             , where: {
-        //                 applyId : data.field.applyId,
-        //                 appliedId : data.field.appliedId,
-        //                 deliverymanId : data.field.deliverymanId,
-        //                 applyState : data.field.applyState,
-        //                 dateStart : data.field.dateStart,
-        //                 dateEnd : data.field.dateEnd,
-        //                 datelineStart : data.field.datelineStart,
-        //                 datelineEnd : data.field.datelineEnd,
-        //             }
-        //         },'data');
-        //
-        //         layer.close(seachIndex);
-        //
-        //     },800);
-        //     return false;
-        // });
+        form.on('submit(admin-search-btn)', function (data) {
+
+            console.log(data.field);
+
+            var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
+            setTimeout(function(){
+
+                //执行搜索重载
+                table.reload('employeeTableId', {
+                    url: '[[${adminEmployeeSearchDir}]]'
+                    , page: {
+                        curr: 1
+                    }
+                    , where: {
+                        employeeId : data.field.employeeId,
+                        username : data.field.username,
+                        employeeName : data.field.employeeName,
+                        sex : data.field.sex,
+                        position : data.field.position,
+                        telephone : data.field.telephone,
+                    }
+                },'data');
+
+                layer.close(seachIndex);
+
+            },800);
+            return false;
+        });
 
         /**
          * toolbar事件监听
@@ -336,34 +199,58 @@
             } else if (obj.event === 'delete') {  // 监听删除操作
                 var checkStatus = table.checkStatus('employeeTableId')
                     , data = checkStatus.data;
-                $.ajax({
-                    url:"applied/delete",
-                    type:'post',
-                    data:JSON.stringify(data),
-                    contentType : "application/json",
-                    beforeSend:function () {
-                        this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
-                    },
-                    success:function(data){
-                        if(data.code == 400){//失败
-                            //alert("失败")
-                            layer.msg("删除失败", {
-                                icon: 5,//失败的表情
-                                time: 1000 //1秒关闭（如果不配置，默认是3秒）
-                            });
-                            return;
-                        }else{
-                            layer.msg("删除成功", {//成功
-                                icon: 6,//成功的表情
-                                time: 1000 //1秒关闭（如果不配置，默认是3秒）
-                            });
-                        }
-                    },
-                    complete: function () {
-                        layer.close(this.layerIndex);
-                    },
-                });
-                table.reload('employeeTableId');
+
+
+                if(data.length==0){
+                    layer.msg("请选择要删除的用户",{
+                        icon: 3,
+                        time:1000
+                    })
+                }else {
+                    layer.confirm('真的删除行么', function(index){
+                        layer.close(index);
+                        //向服务端发送删除指令
+                        $.ajax({
+                            url:'[[${adminEmployeeDeleteMoreDir}]]',
+                            type:'post',
+                            data:JSON.stringify(data),
+                            contentType : "application/json",
+                            beforeSend:function () {
+                                this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                            },
+                            success:function(data){
+                                if(data.code == 404){//失败
+                                    //alert("失败")
+                                    layer.msg("删除失败", {
+                                        icon: 5,//失败的表情
+                                        time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                    });
+                                    return;
+                                }else{
+                                    layer.msg("删除成功", {//成功
+                                        icon: 6,//成功的表情
+                                        time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                    });
+                                }
+                            },
+                            error:function (){
+                                layer.msg("网络出错", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            },
+                            complete: function () {
+                                layer.close(this.layerIndex);
+                            },
+                        });
+                        table.reload('employeeTableId');
+
+                    });
+                }
+
+
+
                 return false;
             } else if(obj.event === 'search'){
                 var flag = document.getElementById("searchBurId").hidden;
@@ -374,180 +261,73 @@
         });
 
         //监听表格复选框选择
-        // table.on('checkbox(currentTableFilter)', function (obj) {
-        //     console.log(obj)
-        // });
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
 
         //监听表格的工具
-        // table.on('tool(currentTableFilter)', function (obj) {
-        //     if (obj.event === 'edit') {
-        //
-        //         var content = miniPage.getHrefContent('applied/edit?id='+obj.data.id);
-        //         var openWH = miniPage.getOpenWidthHeight();
-        //         var index = layer.open({
-        //             title: '编辑申请单',
-        //             type: 1,
-        //             shade: 0.2,
-        //             maxmin:true,
-        //             shadeClose: true,
-        //             area: [openWH[0] + 'px', openWH[1] + 'px'],
-        //             offset: [openWH[2] + 'px', openWH[3] + 'px'],
-        //             content: content,
-        //         });
-        //
-        //         //监听保存
-        //         form.on('submit(save)', function (data) {
-        //
-        //             $.ajax({
-        //                 url:"applying/save",
-        //                 type:'post',
-        //                 data:JSON.stringify(data.field),
-        //                 contentType : "application/json",
-        //                 beforeSend:function () {
-        //                     this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
-        //                 },
-        //                 success:function(data){
-        //                     if(data.code == 400){//失败
-        //                         //alert("失败")
-        //                         layer.msg("保存失败", {
-        //                             icon: 5,//失败的表情
-        //                             time: 1000 //1秒关闭（如果不配置，默认是3秒）
-        //                         });
-        //                         return;
-        //                     }else{
-        //                         layer.msg("保存成功", {//成功
-        //                             icon: 6,//成功的表情
-        //                             time: 1000 //1秒关闭（如果不配置，默认是3秒）
-        //                         });
-        //                         // console.log(data.msg);
-        //                         $("#requisitionid").val(data.msg);
-        //                     }
-        //                 },
-        //                 complete: function () {
-        //                     layer.close(this.layerIndex);
-        //                 },
-        //             });
-        //
-        //             obj.update({
-        //                 dateline:"2021-05-21 13:48:22.705000",
-        //                 state1:" <a class=\"layui-btn layui-btn-normal layui-btn-xs data-count-edit\" lay-event=\"edit\">编辑</a>" +
-        //                     "<a class=\"layui-btn layui-btn-xs layui-btn-danger data-count-delete\" lay-event=\"delete\">删除</a>",
-        //             });//修改成功修改表格数据不进行跳转
-        //
-        //             return false;
-        //         });
-        //
-        //         //监听提交
-        //         form.on('submit(saveBtn)', function(data) {
-        //             $.ajax({
-        //                 url:"applying/submit",
-        //                 type:'post',
-        //                 data:JSON.stringify(data.field),
-        //                 contentType : "application/json",
-        //                 beforeSend:function () {
-        //                     this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
-        //                 },
-        //                 success:function(data){
-        //                     if(data.code == 400){//失败
-        //                         layer.msg("提交失败", {
-        //                             icon: 5,//失败的表情
-        //                             time: 1000 //1秒关闭（如果不配置，默认是3秒）
-        //                         });
-        //                         return;
-        //                     }else{
-        //                         layer.msg("提交成功", {//成功
-        //                             icon: 6,//成功的表情
-        //                             time: 1000 //1秒关闭（如果不配置，默认是3秒）
-        //                         });
-        //
-        //                         //锁死表单选项
-        //                         $('.yuanliao').attr('disabled', 'disabled');
-        //                         $('.number').attr('disabled', 'disabled');
-        //                         $('#dateline').attr('disabled', 'disabled');
-        //                         $('.tijiao').attr('disabled', 'disabled');
-        //                         form.render('select');
-        //                     }
-        //                 },
-        //                 error:function (data) {
-        //                     alert("提交失败")
-        //                 },
-        //                 complete: function () {
-        //                     layer.close(this.layerIndex);
-        //                 },
-        //             });
-        //
-        //             obj.update({
-        //                 dateline:"2021-05-21 13:48:22.705000",
-        //                 state:1,
-        //                 state1:" <a class=\"layui-btn layui-btn-normal layui-btn-xs data-count-edit\" lay-event=\"detail\">详情</a>" +
-        //                     "<a class=\"layui-btn layui-btn-xs layui-btn-danger data-count-delete\" lay-event=\"delete\">删除</a>",
-        //             });//修改成功修改表格数据不进行跳转
-        //
-        //             layer.closeAll();
-        //
-        //             return false;
-        //         });
-        //
-        //         $(window).on("resize", function () {
-        //             layer.full(index);
-        //         });
-        //
-        //         return false;
-        //     } else if (obj.event === 'detail') {
-        //         var content = miniPage.getHrefContent('test6');
-        //         var openWH = miniPage.getOpenWidthHeight();
-        //
-        //         var index = layer.open({
-        //             title: '申请单详情',
-        //             type: 1,
-        //             shade: 0.2,
-        //             maxmin:true,
-        //             shadeClose: true,
-        //             area: [openWH[0] + 'px', openWH[1] + 'px'],
-        //             offset: [openWH[2] + 'px', openWH[3] + 'px'],
-        //             content: content,
-        //         });
-        //
-        //         $(window).on("resize", function () {
-        //             layer.full(index);
-        //         });
-        //         return false;
-        //
-        //     } else if(obj.event === 'delete'){
-        //         layer.confirm('真的删除行么', function(index){
-        //             obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-        //             layer.close(index);
-        //             //向服务端发送删除指令
-        //             $.ajax({
-        //                 url:"applied/deleteone",
-        //                 type:'post',
-        //                 data:JSON.stringify(obj.data),
-        //                 contentType : "application/json",
-        //                 beforeSend:function () {
-        //                     this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
-        //                 },
-        //                 success:function(data){
-        //                     if(data.code == 400){//失败
-        //                         //alert("失败")
-        //                         layer.msg("删除失败", {
-        //                             icon: 5,//失败的表情
-        //                             time: 1000 //1秒关闭（如果不配置，默认是3秒）
-        //                         });
-        //                         return;
-        //                     }else{
-        //                         layer.msg("删除成功", {//成功
-        //                             icon: 6,//成功的表情
-        //                             time: 1000 //1秒关闭（如果不配置，默认是3秒）
-        //                         });
-        //                     }
-        //                 },
-        //                 complete: function () {
-        //                     layer.close(this.layerIndex);
-        //                 },
-        //             });
-        //         });
-        //     }
-        // });
+        table.on('tool(currentTableFilter)', function (obj) {
+            if (obj.event === 'detail') {
+                console.log(obj.data.employeeId)
+                var content = miniPage.getHrefContent('[[${adminEmployeeDetailDir}]]?employeeId='+obj.data.employeeId);
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '员工详情',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                });
+
+                $("#finishChangeBtnId").click(function () {
+                    layer.close(index);
+                    return false
+                })
+
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+
+            } else if(obj.event === 'delete'){
+                layer.confirm('真的删除行么', function(index){
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    $.ajax({
+                        url:'[[${adminEmployeeDeleteOneDir}]]',
+                        type:'post',
+                        data:JSON.stringify(obj.data),
+                        contentType : "application/json",
+                        beforeSend:function () {
+                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                        },
+                        success:function(data){
+                            if(data.code == 404){//失败
+                                //alert("失败")
+                                layer.msg("删除失败", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            }else{
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.msg("删除成功", {//成功
+                                    icon: 6,//成功的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                            }
+                        },
+                        complete: function () {
+                            layer.close(this.layerIndex);
+                        },
+                    });
+                });
+            }
+        });
 
 
 
