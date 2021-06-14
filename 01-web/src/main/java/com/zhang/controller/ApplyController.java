@@ -47,11 +47,11 @@ public class ApplyController {
     private EmployeeInformationImpl employeeInformationImpl;
 
     //响应主页
-    @RequestMapping("applypage")
-    private ModelAndView homePage(String username){
-        System.out.println("进入-------homePage");
+    @RequestMapping("apply/index")
+    private ModelAndView applyIndex(String username){
+        System.out.println("进入-------applyIndex");
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("templates/applypage");
+        mv.setViewName("templates/index");
         mv.addObject("username",username);
         mv.addObject("informationDir","applied/information?username="+username);
         mv.addObject("initDir","apply/init");

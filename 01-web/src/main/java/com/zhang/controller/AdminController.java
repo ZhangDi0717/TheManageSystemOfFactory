@@ -52,13 +52,19 @@ public class AdminController {
 
 
     //响应主页
-    @RequestMapping("admin/homepage")
-    private ModelAndView homePage(HttpServletRequest httpServletRequest){
-        System.out.println("进入-------homePage");
+    @RequestMapping("admin/index")
+    private ModelAndView adminIndex(HttpServletRequest httpServletRequest){
+        System.out.println("进入-------adminIndex");
+
+        //方便测试开发
+        if(httpServletRequest.getSession().getAttribute("username")==null)
+            httpServletRequest.getSession().setAttribute("username","admin");
+
         //获取用户名
         String username = (String) httpServletRequest.getSession().getAttribute("username");
+
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("templates/applypage");
+        mv.setViewName("templates/index");
         mv.addObject("username",username);
         mv.addObject("initDir","admin/init");
         return mv;
@@ -85,6 +91,8 @@ public class AdminController {
         List<Son> sons3 = new ArrayList<Son>();
         List<Son> sons4 = new ArrayList<Son>();
         List<Son> sons5 = new ArrayList<Son>();
+        List<Son> sons6 = new ArrayList<Son>();
+
 
         /****  添加三级菜单 START ****/
 
@@ -96,11 +104,11 @@ public class AdminController {
 //        sons1.add(son1_2);
 //
         //个人信息功能演示
-        Son son2_1 = new Son("个人信息","page/user-setting.html","fa fa-tachometer","_self");
+        Son son2_1 = new Son("个人信息","../employee-setting","fa fa-tachometer","_self");
         sons2.add(son2_1);
 
         //修改密码
-        Son son2_2 = new Son("修改密码","page/user-password.html","fa fa-tachometer","_self");
+        Son son2_2 = new Son("修改密码","../employee-password","fa fa-tachometer","_self");
         sons2.add(son2_2);
 
         //申请单管理---查看所有的申清单----所有状态----不能修改
@@ -114,6 +122,11 @@ public class AdminController {
         //权限管理
         Son son5_1 = new Son("权限管理","/admin/permission/manage","fa fa-tachometer","_self");
         sons5.add(son5_1);
+
+        //生产参数检测
+        Son son6_1 = new Son("生产管理","/admin/production/manage","fa fa-tachometer","_self");
+
+        sons6.add(son6_1);
 
         /****  添加三级菜单 EDN ****/
 
@@ -136,11 +149,15 @@ public class AdminController {
         Child child2_2 = new Child("人员管理","","fa fa-file-text-o","_self",sons4);
         children2.add(child2_2);
 
-        Child child2_3 = new Child("权限管理","","fa fa-file-text-o","_self",sons5);
+        Child child2_3 = new Child("生产检测","","fa fa-file-text-o","_self",sons6);
         children2.add(child2_3);
 
-        Child child2_4 = new Child("个人管理","","fa fa-file-text-o","_self",sons2);
+
+        Child child2_4 = new Child("权限管理","","fa fa-file-text-o","_self",sons5);
         children2.add(child2_4);
+
+        Child child2_5 = new Child("个人管理","","fa fa-file-text-o","_self",sons2);
+        children2.add(child2_5);
 
         /****  添加二级菜单 END ****/
 
@@ -1712,6 +1729,29 @@ public class AdminController {
 
         return (JSONObject) JSONObject.toJSON(result);
     }
+
+
+
+
+
+    /**
+     * 生产参数的检测
+     *
+     *
+     *
+     */
+    @RequestMapping(value = "/admin/production/manage")
+    private ModelAndView productionManage(){
+        System.out.println("go into productionManage");
+        ModelAndView mv = new ModelAndView();
+
+        mv.setViewName("static/page/admin/production");
+        return mv;
+    }
+
+
+
+
 
 
 

@@ -78,14 +78,6 @@ public class MyIoHandler extends IoHandlerAdapter {
 
         String ckey = "1234qwqw1234qwqw";
 
-//        byte[] key = ckey.getBytes();
-//        byte[] a1 = Utils.Encrypt(data,key);
-//
-//        System.out.println("a1: "+new String(a1));
-//
-//        byte[] a2 = Utils.Decrypt(a1,key);
-//
-//        System.out.println("a2: "+new String(a2));
 
         //msg   id:1:msv
         if(Utils.isNotEmpty(msg)){//判断消息是否为空
@@ -139,7 +131,7 @@ public class MyIoHandler extends IoHandlerAdapter {
 
         //向web服务器发送数据json
         HttpServiceSender cl = new HttpServiceSender();
-        String [] response =cl.postJson(url,json);
+        String [] response = cl.postJson(url,json);
 
         System.out.println("json:" +json);
         System.out.println("++++++++++++++"+response[0]+"  "+response[1]);
