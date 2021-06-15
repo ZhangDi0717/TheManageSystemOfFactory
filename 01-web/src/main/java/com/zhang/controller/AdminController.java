@@ -112,8 +112,14 @@ public class AdminController {
         sons2.add(son2_2);
 
         //申请单管理---查看所有的申清单----所有状态----不能修改
-        Son son3_1 = new Son("申请单管理","/admin/apply/manage","fa fa-tachometer","_self");
+        Son son3_1 = new Son("申请单申请","/admin/apply/manage","fa fa-tachometer","_self");
         sons3.add(son3_1);
+
+        Son son3_2 = new Son("申请单审批","/admin/approval/manage","fa fa-tachometer","_self");
+        sons3.add(son3_2);
+
+        Son son3_3 = new Son("申请单配送","/admin/delivery/manage","fa fa-tachometer","_self");
+        sons3.add(son3_3);
 
         //人员管理
         Son son4_1 = new Son("人员管理","/admin/employee/manage","fa fa-tachometer","_self");
@@ -1123,6 +1129,815 @@ public class AdminController {
 
 
     /**
+     * 请求路径：admin/approval/manage
+     * 模块功能：管理申请单的审批流程
+     *
+     * 功能路径：
+     *      adminApprovalTableIdUrl          数据表格的请求地址            admin/approval/table
+     *      adminApprovalSearchDir           根据条件搜索指定的申请单       approval/search
+     *      adminApplyApprovingDir           审批按钮                    approval/approving
+     *      adminApplyApprovingBtnDir        审批通过                    approval/approvingBtn
+     *      adminApplyApprovingErrorBtnDir   审批驳回                    approval/approvingErrorBtn
+     *
+     * @return ModelAndView
+     */
+    @RequestMapping(value = "/admin/approval/manage")
+    private ModelAndView approvalManage(HttpServletRequest httpServletRequest){
+        ModelAndView mv = new ModelAndView();
+
+        mv.addObject("approvalSearchDir","approval/search");
+        //响应申请/生产员工
+        List<Employee> appliedList =  employeeimpl.findByPosition(positionimpl.getOne(Long.parseLong("2")));
+        mv.addObject("appliedList",appliedList);
+        //响应配送员工
+        List<Employee> deliverymanList =  employeeimpl.findByPosition(positionimpl.getOne(Long.parseLong("4")));
+        mv.addObject("deliverymanList",deliverymanList);
+        //响应申请单Id
+        List<Requisition> applyList = requisitionimpl.findByStateBetween(1,3);
+        mv.addObject("applyList",applyList);
+
+        //数据表格
+        mv.addObject("adminApprovalTableIdUrl","approval/table");
+
+        //查询按钮
+        mv.addObject("adminApprovalSearchDir","approval/search");
+
+        //审批按钮
+        mv.addObject("adminApplyApprovingDir","approval/approving");
+
+        mv.addObject("adminApplyApprovingBtnDir","approval/approvingBtn");
+        mv.addObject("adminApplyApprovingErrorBtnDir","approval/approvingErrorBtn");
+
+        mv.setViewName("static/page/admin/approval");
+        return mv;
+    }
+
+
+
+    // adminApprovalTableIdUrl         数据表格的请求地址           admin/approval/table
+    @RequestMapping(value = "admin/approval/table",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject approvalTable(){
+        System.out.println("进入------approvalTable");
+
+        JSONObject jsonObject = new JSONObject();
+
+        List<Requisition> requisitionList = requisitionimpl.findByStateBetween(1,3);
+
+        AdminTableResult adminTableResult = null;
+        if( requisitionList.size()==0 ){
+            adminTableResult = new AdminTableResult(404,"暂无申请单信息",0,null);
+
+        }else {//有申请单信息
+            List<AdminTable> adminTableList = new ArrayList<AdminTable>();
+            for (Requisition requisition :requisitionList){
+                AdminTable adminTable = new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId());
+                adminTableList.add(adminTable);
+            }
+            adminTableResult = new AdminTableResult(0,"申请单请求成功",requisitionList.size(),adminTableList);
+
+        }
+
+        jsonObject = (JSONObject) JSONObject.toJSON(adminTableResult);
+
+        return jsonObject;
+    }
+
+
+    //adminApprovalSearchDir      根据条件搜索指定的申请单       approval/search
+    @RequestMapping(value = "admin/approval/search",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject approvalSearch(@RequestParam(value = "applyId", required = false,defaultValue = "") String applyId,
+                             @RequestParam(value = "appliedId", required = false, defaultValue = "") String appliedId,
+                             @RequestParam(value = "deliverymanId", required = false, defaultValue = "") String deliverymanId,
+                             @RequestParam(value = "applyState",required = false,defaultValue = "") String applyState,
+                             @RequestParam(value = "dateStart",required = false,defaultValue = "") String dateStart,
+                             @RequestParam(value = "dateEnd",required = false,defaultValue = "") String dateEnd,
+                             @RequestParam(value = "datelineStart",required = false,defaultValue = "") String datelineStart,
+                             @RequestParam(value = "datelineEnd",required = false,defaultValue = "") String datelineEnd) {
+        System.out.println("进入------approvalSearch");
+        int flag = 1;
+        JSONObject jsonObject = new JSONObject();
+        AdminTableResult adminTableResult = null;
+        List<AdminTable> adminTableList = new ArrayList<AdminTable>();
+
+        try {
+
+            //通过申请单状态
+            List<Requisition> requisitionLists = requisitionimpl.findByStateBetween(1,3);
+            List<AdminTable> tableLists = new ArrayList<AdminTable>();
+            for (Requisition requisition: requisitionLists) {
+                tableLists.add(new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId()
+                ));
+            }
+            //进行交并集
+            if( flag==1 ){//并集(先做差集再做添加所有）
+                adminTableList.removeAll(tableLists); // bingList为 [1, 2]
+                adminTableList.addAll(tableLists);  //添加[3,4,5,6]
+                flag = 0;
+            }else {//交集
+                adminTableList.retainAll(tableLists);
+            }
+
+            if( !applyState.isEmpty() ){//通过申请单状态
+                List<Requisition> requisitionList = requisitionimpl.findByState(Integer.parseInt(applyState));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+
+            }
+
+
+            //单独查询
+            if( !applyId.isEmpty()){//订单Id
+                Requisition requisition = requisitionimpl.getOne(Integer.parseInt(applyId));
+                List<AdminTable> TableList = new ArrayList<AdminTable>();
+                TableList.add(new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId())
+                );
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(TableList); // bingList为 [1, 2]
+                    adminTableList.addAll(TableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(TableList);
+                }
+            }
+
+            if( !appliedId.isEmpty()) {//申请人
+                List<Requisition> requisitionList = requisitionimpl.findByEmployee(employeeimpl.getOne(Long.parseLong(appliedId)));
+                List<AdminTable> TableList = new ArrayList<AdminTable>();
+                //封装表格
+                for (Requisition requisition :requisitionList) {
+                    TableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(TableList); // bingList为 [1, 2]
+                    adminTableList.addAll(TableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(TableList);
+                }
+
+            }
+
+            if( !deliverymanId.isEmpty()){//配送员
+                List<Distribution> distributionList = distributionimpl.findByEmployee(employeeimpl.getOne(Long.parseLong(deliverymanId)));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Distribution distribution: distributionList) {
+                    Requisition requisition = requisitionimpl.findByDistribution(distribution);
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+
+            }
+
+            if( !dateStart.isEmpty()){//申请日期
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                List<Requisition> requisitionList = requisitionimpl.findByDateBetween(sdf.parse(dateStart), sdf.parse(dateEnd));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+            }
+
+            if( !datelineStart.isEmpty()){//生产日期
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                List<Requisition> requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(dateStart), sdf.parse(dateEnd));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+            }
+
+            adminTableResult = new AdminTableResult(
+                    0,
+                    "查询成功",
+                    adminTableList.size(),
+                    adminTableList
+            );
+
+        }catch (Exception e){
+            System.out.println("search 处理失败");
+            adminTableResult = new AdminTableResult(
+                    404,
+                    "查询失败",
+                    0,
+                    null
+            );
+        }
+
+
+        jsonObject = (JSONObject) JSONObject.toJSON(adminTableResult);
+
+        return jsonObject;
+
+    }
+
+
+
+    //adminApplyApprovingDir      审批按钮                    approval/approving
+    //审批
+    @RequestMapping(value ="admin/approval/approving")
+    private ModelAndView approvalApproving(String id,String v){
+        System.out.println("进入------approvalApproving");
+        ModelAndView mv = new ModelAndView();
+
+        Requisition requisition = requisitionimpl.getOne(Integer.parseInt(id));
+
+
+
+        //申请单
+        mv.addObject("requisition",requisition);
+
+        //分配单
+        Distribution distribution = requisition.getDistribution();
+        mv.addObject("distribution",distribution);
+
+        //主料
+        List<Material> mainIngredientList = materialimpl.findAllByState(1);
+        mv.addObject("mainIngredientList",mainIngredientList);
+
+        //辅料
+        List<Material> ingredientList = materialimpl.findAllByState(0);
+        mv.addObject("ingredientList",ingredientList);
+
+        //所选主料
+        List<MainIngredient> selectMainIngredientList = distribution.getMainingredient();
+        mv.addObject("selectMainIngredientList",selectMainIngredientList);
+
+        //所选辅料
+        List<Ingredient> selectIngredientList = distribution.getIngredient();
+        mv.addObject("selectIngredientList",selectIngredientList);
+
+        //配送员
+        Position position = positionimpl.getOne(Long.parseLong("3"));
+        List<Employee> employeeList = employeeimpl.findByPosition(position);
+        mv.addObject("employeeList",employeeList);
+
+        if (requisition.getState() == 1){
+            requisition.setState(2);
+            requisitionimpl.save(requisition);
+        }
+
+
+
+        mv.setViewName("static/page/admin/approving");
+        return mv;
+    }
+
+    //adminApplyApprovingBtnDir        审批通过                    approval/approvingBtn
+    @RequestMapping(value = "admin/approval/approvingBtn",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject approvalApprovingBtn(@RequestBody Map param){
+        System.out.println("go into approvalApprovingBtn");
+        JSONObject jsonObject = null;
+
+        try {
+            Distribution distribution = distributionimpl.getOne(Integer.parseInt(param.get("distributionId").toString()));
+            //更新配送员
+            Employee employee = employeeimpl.getOne(Long.parseLong(param.get("distributionMan").toString()));
+            distribution.setEmployee(employee);//更新配送员
+            //更新主料表
+            List<MainIngredient> newMainIngredientList = new ArrayList<MainIngredient>();
+            List<MainIngredient> mainIngredientList = distribution.getMainingredient();
+
+            MainIngredient mainIngredient0 = mainIngredientList.get(0);
+            mainIngredient0.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("zhuliao0").toString())));//种类
+            mainIngredient0.setDosage(Double.parseDouble(param.get("zhuliao0number").toString()));
+            newMainIngredientList.add(mainIngredient0);
+
+            MainIngredient mainIngredient1 = mainIngredientList.get(1);
+            mainIngredient1.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("zhuliao1").toString())));//种类
+            mainIngredient1.setDosage(Double.parseDouble(param.get("zhuliao1number").toString()));
+            newMainIngredientList.add(mainIngredient1);
+
+            MainIngredient mainIngredient2 = mainIngredientList.get(2);
+            mainIngredient2.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("zhuliao2").toString())));//种类
+            mainIngredient2.setDosage(Double.parseDouble(param.get("zhuliao2number").toString()));
+            newMainIngredientList.add(mainIngredient2);
+
+            distribution.setMainingredient(newMainIngredientList);//更新主料表
+
+            //更新辅料表
+            List<Ingredient> newIngredientList = new ArrayList<Ingredient>();
+            List<Ingredient> ingredientList = distribution.getIngredient();
+
+            Ingredient ingredient0 = ingredientList.get(0);
+            ingredient0.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("fuliao0").toString())));
+            ingredient0.setDosage(Double.parseDouble(param.get("fuliao0number").toString()));
+            newIngredientList.add(ingredient0);
+
+            Ingredient ingredient1 = ingredientList.get(1);
+            ingredient1.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("fuliao1").toString())));
+            ingredient1.setDosage(Double.parseDouble(param.get("fuliao1number").toString()));
+            newIngredientList.add(ingredient1);
+
+            Ingredient ingredient2 = ingredientList.get(2);
+            ingredient2.setMaterial(materialimpl.getOne(Integer.parseInt(param.get("fuliao2").toString())));
+            ingredient2.setDosage(Double.parseDouble(param.get("fuliao2number").toString()));
+            newIngredientList.add(ingredient2);
+
+            distribution.setIngredient(newIngredientList);//更新辅料表
+
+            distributionimpl.save(distribution);
+
+            //更新申请单信息---申请单状态和审批意见
+            Requisition requisition = requisitionimpl.findByDistribution(distribution);
+            requisition.setMassage(param.get("distributionMsg").toString());
+            requisition.setState(4);
+            requisitionimpl.save(requisition);
+
+            Result result = new Result(0, "审批完成");
+
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+        } catch (Exception e){
+            System.out.println("applyChange processing failed");
+            System.out.println(e.toString());
+            Result result = new Result(404, "审批失败");
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+        }
+
+        return jsonObject;
+    }
+
+
+    //adminApplyApprovingErrorBtnDir   审批驳回                    approval/approvingErrorBtn
+    @RequestMapping(value = "admin/approval/approvingErrorBtn",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject approvalApprovingErrorBtn(@RequestBody Map param){
+        System.out.println("go into applyChange");
+        JSONObject jsonObject = null;
+
+        try {
+            Distribution distribution = distributionimpl.getOne(Integer.parseInt(param.get("distributionId").toString()));
+            Requisition requisition = requisitionimpl.findByDistribution(distribution);
+            requisition.setState(3);
+            requisition.setMassage(param.get("distributionMsg").toString());
+
+            requisitionimpl.save(requisition);
+
+            Result result = new Result(0, "审批完成");
+
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+        } catch (Exception e){
+            System.out.println("applyChange processing failed");
+            Result result = new Result(404, "审批失败");
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+            System.out.println(e.toString());
+        }
+
+        return jsonObject;
+    }
+
+
+
+
+
+    /**
+     * 请求地址 ：admin/delivery/manage
+     * 功能说明 ：进行订单原料的分配
+     *      adminDeliveryTableIdUrl         数据表格的请求地址           admin/delivery/table
+     *      adminDeliveryDetailDir          查看配送表                 admin/delivery/detail
+     *      adminDeliveryFinishBtnDir       配送完成                   admin/delivery/finish
+     *      adminDeliverySearchDir          搜索表格                   admin/delivery/search
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @RequestMapping(value = "admin/delivery/manage")
+    private ModelAndView deliveryManage(HttpServletRequest httpServletRequest){
+        ModelAndView mv = new ModelAndView();
+        System.out.println("go into deliveryManage");
+
+        mv.addObject("approvalSearchDir","approval/search");
+        //响应申请/生产员工
+        List<Employee> appliedList =  employeeimpl.findByPosition(positionimpl.getOne(Long.parseLong("2")));
+        mv.addObject("appliedList",appliedList);
+        //响应配送员工
+        List<Employee> deliverymanList =  employeeimpl.findByPosition(positionimpl.getOne(Long.parseLong("4")));
+        mv.addObject("deliverymanList",deliverymanList);
+        //响应申请单Id
+        List<Requisition> applyList = requisitionimpl.findByStateBetween(1,3);
+        mv.addObject("applyList",applyList);
+
+        //数据表格
+        mv.addObject("adminDeliveryTableIdUrl","delivery/table");
+
+        //查询按钮
+        mv.addObject("adminDeliverySearchDir","delivery/search");
+
+        //分配单详情按钮
+        mv.addObject("adminDeliveryDetailDir","delivery/detail");
+
+        //分配单完成
+        mv.addObject("adminDeliveryFinishBtnDir","delivery/finish");
+
+
+
+        mv.setViewName("static/page/admin/delivery");
+        return mv;
+    }
+
+    // adminDeliveryTableIdUrl         数据表格的请求地址           admin/delivery/table
+    @RequestMapping(value = "admin/delivery/table",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject deliveryTable(){
+        System.out.println("进入------deliveryTable");
+
+        JSONObject jsonObject = new JSONObject();
+
+        List<Requisition> requisitionList = requisitionimpl.findByState(4);
+
+        AdminTableResult adminTableResult = null;
+        if( requisitionList.size()==0 ){
+            adminTableResult = new AdminTableResult(404,"暂无申请单信息",0,null);
+
+        }else {//有申请单信息
+            List<AdminTable> adminTableList = new ArrayList<AdminTable>();
+            for (Requisition requisition :requisitionList){
+                AdminTable adminTable = new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId());
+                adminTableList.add(adminTable);
+            }
+            adminTableResult = new AdminTableResult(0,"申请单请求成功",requisitionList.size(),adminTableList);
+
+        }
+
+        jsonObject = (JSONObject) JSONObject.toJSON(adminTableResult);
+
+        return jsonObject;
+    }
+
+    //adminDeliveryDetailDir          查看配送表                  admin/delivery/detail
+    @RequestMapping(value ="admin/delivery/detail")
+    private ModelAndView deliveryDetail(String id,String v){
+        System.out.println("进入------deliveryDetail");
+        ModelAndView mv = new ModelAndView();
+
+        Requisition requisition = requisitionimpl.getOne(Integer.parseInt(id));
+
+        //申请单
+        mv.addObject("requisition",requisition);
+
+        //分配单
+        Distribution distribution = requisition.getDistribution();
+        mv.addObject("distribution",distribution);
+
+
+        //所选主料
+        List<MainIngredient> selectMainIngredientList = distribution.getMainingredient();
+        mv.addObject("selectMainIngredientList",selectMainIngredientList);
+
+        //所选辅料
+        List<Ingredient> selectIngredientList = distribution.getIngredient();
+        mv.addObject("selectIngredientList",selectIngredientList);
+
+
+
+        mv.setViewName("static/page/admin/delivering");
+        return mv;
+    }
+
+    //adminDeliveryFinishBtnDir       配送完成                    admin/delivery/finish
+    @RequestMapping(value = "admin/delivery/finish",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject deliveryFinishBtn(@RequestBody Map param){
+        System.out.println("go into deliveryFinishBtn");
+        JSONObject jsonObject = null;
+
+        try {
+            Distribution distribution = distributionimpl.getOne(Integer.parseInt(param.get("distributionId").toString()));
+
+            //更新申请单信息---申请单状态和审批意见
+            Requisition requisition = requisitionimpl.findByDistribution(distribution);
+            requisition.setState(5);
+            requisitionimpl.save(requisition);
+
+            Result result = new Result(0, "配送完成");
+
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+        } catch (Exception e){
+            System.out.println("deliveryFinishBtn processing failed");
+            System.out.println(e.toString());
+            Result result = new Result(404, "配送失败");
+            jsonObject = (JSONObject) JSONObject.toJSON(result);
+        }
+
+        return jsonObject;
+    }
+
+
+    //adminDeliverySearchDir          搜索表格                   admin/delivery/search
+    @RequestMapping(value = "admin/delivery/search",method = RequestMethod.POST)
+    @ResponseBody
+    public JSONObject deliverySearch(@RequestParam(value = "applyId", required = false,defaultValue = "") String applyId,
+                                     @RequestParam(value = "appliedId", required = false, defaultValue = "") String appliedId,
+                                     @RequestParam(value = "deliverymanId", required = false, defaultValue = "") String deliverymanId,
+                                     @RequestParam(value = "applyState",required = false,defaultValue = "") String applyState,
+                                     @RequestParam(value = "dateStart",required = false,defaultValue = "") String dateStart,
+                                     @RequestParam(value = "dateEnd",required = false,defaultValue = "") String dateEnd,
+                                     @RequestParam(value = "datelineStart",required = false,defaultValue = "") String datelineStart,
+                                     @RequestParam(value = "datelineEnd",required = false,defaultValue = "") String datelineEnd)
+    {
+        System.out.println("进入------deliverySearch");
+        int flag = 1;
+        JSONObject jsonObject = new JSONObject();
+        AdminTableResult adminTableResult = null;
+        List<AdminTable> adminTableList = new ArrayList<AdminTable>();
+
+        try {
+
+            //通过申请单状态
+            List<Requisition> requisitionLists = requisitionimpl.findByState(4);
+            List<AdminTable> tableLists = new ArrayList<AdminTable>();
+            for (Requisition requisition: requisitionLists) {
+                tableLists.add(new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId()
+                ));
+            }
+            //进行交并集
+            if( flag==1 ){//并集(先做差集再做添加所有）
+                adminTableList.removeAll(tableLists); // bingList为 [1, 2]
+                adminTableList.addAll(tableLists);  //添加[3,4,5,6]
+                flag = 0;
+            }else {//交集
+                adminTableList.retainAll(tableLists);
+            }
+
+            if( !applyState.isEmpty() ){//通过申请单状态
+                List<Requisition> requisitionList = requisitionimpl.findByState(Integer.parseInt(applyState));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+
+            }
+
+
+            //单独查询
+            if( !applyId.isEmpty()){//订单Id
+                Requisition requisition = requisitionimpl.getOne(Integer.parseInt(applyId));
+                List<AdminTable> TableList = new ArrayList<AdminTable>();
+                TableList.add(new AdminTable(
+                        requisition.getId(),
+                        requisition.getDateline(),
+                        requisition.getDate(),
+                        requisition.getState(),
+                        requisition.getState(),
+                        requisition.getEmployee().getId())
+                );
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(TableList); // bingList为 [1, 2]
+                    adminTableList.addAll(TableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(TableList);
+                }
+            }
+
+            if( !appliedId.isEmpty()) {//申请人
+                List<Requisition> requisitionList = requisitionimpl.findByEmployee(employeeimpl.getOne(Long.parseLong(appliedId)));
+                List<AdminTable> TableList = new ArrayList<AdminTable>();
+                //封装表格
+                for (Requisition requisition :requisitionList) {
+                    TableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(TableList); // bingList为 [1, 2]
+                    adminTableList.addAll(TableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(TableList);
+                }
+
+            }
+
+            if( !deliverymanId.isEmpty()){//配送员
+                List<Distribution> distributionList = distributionimpl.findByEmployee(employeeimpl.getOne(Long.parseLong(deliverymanId)));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Distribution distribution: distributionList) {
+                    Requisition requisition = requisitionimpl.findByDistribution(distribution);
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+
+            }
+
+            if( !dateStart.isEmpty()){//申请日期
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                List<Requisition> requisitionList = requisitionimpl.findByDateBetween(sdf.parse(dateStart), sdf.parse(dateEnd));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+            }
+
+            if( !datelineStart.isEmpty()){//生产日期
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                List<Requisition> requisitionList = requisitionimpl.findByDatelineBetween(sdf.parse(dateStart), sdf.parse(dateEnd));
+                List<AdminTable> tableList = new ArrayList<AdminTable>();
+                for (Requisition requisition: requisitionList) {
+                    tableList.add(new AdminTable(
+                            requisition.getId(),
+                            requisition.getDateline(),
+                            requisition.getDate(),
+                            requisition.getState(),
+                            requisition.getState(),
+                            requisition.getEmployee().getId()
+                    ));
+                }
+                //进行交并集
+                if( flag==1 ){//并集(先做差集再做添加所有）
+                    adminTableList.removeAll(tableList); // bingList为 [1, 2]
+                    adminTableList.addAll(tableList);  //添加[3,4,5,6]
+                    flag = 0;
+                }else {//交集
+                    adminTableList.retainAll(tableList);
+                }
+            }
+
+            adminTableResult = new AdminTableResult(
+                    0,
+                    "查询成功",
+                    adminTableList.size(),
+                    adminTableList
+            );
+
+        }catch (Exception e){
+            System.out.println("deliverySearch 处理失败");
+            System.out.println(e.toString());
+            adminTableResult = new AdminTableResult(
+                    404,
+                    "查询失败",
+                    0,
+                    null
+            );
+        }
+
+
+        jsonObject = (JSONObject) JSONObject.toJSON(adminTableResult);
+
+        return jsonObject;
+
+    }
+
+
+
+
+
+
+
+    /**
      * 模块说明：
      *          1、查看职员的各种信息----职位-----个人信息------他们负责的订单
      *          2、添加删除职员
@@ -1177,6 +1992,7 @@ public class AdminController {
 
         return mv;
     }
+
 
    //adminEmployeeTableDir       员工数据表格的请求地址        employee/table
    @RequestMapping(value = "admin/employee/table",method = RequestMethod.POST)
@@ -1734,6 +2550,10 @@ public class AdminController {
 
 
 
+
+
+
+
     /**
      * 生产参数的检测
      *
@@ -1748,6 +2568,7 @@ public class AdminController {
         mv.setViewName("static/page/admin/production");
         return mv;
     }
+
 
 
 

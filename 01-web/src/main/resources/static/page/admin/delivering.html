@@ -1,0 +1,161 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main" align="center">
+
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>分配单详情</legend>
+        </fieldset>
+
+        <form class="layui-form" action="">
+
+            <div class="layui-form-item" hidden>
+                <div class="layui-inline">
+                    <label class="layui-form-label">分配单Id</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" name="distributionId" class="layui-input" th:value="${distribution.getId()}" disabled>
+                    </div>
+                </div>
+
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>主料选择</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料1</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectMainIngredientList.get(0).getMaterial().getName()}" disabled>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectMainIngredientList.get(0).getDosage()}" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料2</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectMainIngredientList.get(1).getMaterial().getName()}" disabled>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectMainIngredientList.get(1).getDosage()}" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">原料3</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectMainIngredientList.get(2).getMaterial().getName()}" disabled>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectMainIngredientList.get(2).getDosage()}" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend>辅料选择</legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料1</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectIngredientList.get(0).getMaterial().getName()}" disabled>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectIngredientList.get(0).getDosage()}" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料2</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectIngredientList.get(1).getMaterial().getName()}" disabled>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectIngredientList.get(1).getDosage()}" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <!--                label-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">辅料3</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectIngredientList.get(2).getMaterial().getName()}" disabled>
+                    </div>
+                </div>
+                <!--                select-->
+                <div class="layui-inline">
+                    <label class="layui-form-label">数量</label>
+                    <div class="layui-input-block" style="width: 100px;">
+                        <input type="text" class="layui-input" th:value="${selectIngredientList.get(2).getDosage()}" disabled>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend></legend>
+            </fieldset>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit  lay-filter="finishBtn">完成</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate
+            , $ = layui.jquery;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+    });
+</script>
