@@ -1,0 +1,2 @@
+登录页面背景图片未全覆盖，可考虑将css样式background-size属性选择变为cover
+页面未做移动端适配
