@@ -1,0 +1,281 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset" hidden="hidden" id="searchBurId">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+
+                <form class="layui-form" action="">
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">申请员工</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="appliedId" id="appliedId">
+                                    <option value=""></option>
+                                    <option value="" th:each="applied:${appliedList}" th:value="${applied.getId()}" th:text="${applied.getUsername()}" ></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">配送员工</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="deliverymanId"  id="deliverymanId">
+                                    <option value=""></option>
+                                    <option value="" th:each="deliveryman:${deliverymanList}" th:value="${deliveryman.getId()}" th:text="${deliveryman.getUsername()}" ></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">申请单号</label>
+                            <div class="layui-input-inline">
+                                <select name="applyId" id="applyId" lay-search>
+                                    <option value=""></option>
+                                    <option value="" th:each="apply:${applyList}" th:value="${apply.getId()}" th:text="${apply.getId()}" ></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">审核状态</label>
+                            <div class="layui-input-inline" autocomplete="off" style="width: 100px;">
+                                <select name="applyState" >
+                                    <option value=""></option>
+                                    <option value="1">等待审核</option>
+                                    <option value="2">正在审核</option>
+                                    <option value="3">审核退回</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item">
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">生产日期</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="dateStart" name="dateStart">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="dateEnd" name="dateEnd">
+                            </div>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="layui-inline">
+                            <label class="layui-form-label">截止日期</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="datelineStart" name="datelineStart">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text"  class="layui-input" id="datelineEnd" name="datelineEnd">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="admin-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+
+
+
+                </form>
+
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="search"> 搜索 </button>
+            </div>
+        </script>
+
+
+        <table class="layui-hide" id="adminTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="buttonTpl">
+            {{#  if(d.state == 0){ }}
+            <button class="layui-btn layui-btn-warm layui-btn-xs">未提交</button>
+            {{#  } else if(d.state == 1) { }}
+            <button class="layui-btn layui-btn-xs">待审批</button><!--审批人员还没有打开-->
+            {{#  } else if(d.state == 2) { }}
+            <button class="layui-btn layui-btn-normal layui-btn-xs">审批中</button><!--审批人员打开但没有完成审批-->
+            {{#  } else if(d.state == 3) { }}
+            <button class="layui-btn layui-btn-danger layui-btn-xs">已退回</button><!--审批不通过-->
+            {{#  } else if(d.state == 4) { }}
+            <button class="layui-btn layui-btn-normal layui-btn-xs">配送中</button><!--审批已通过，原辅料配送中-->
+            {{#  } else if(d.state == 5) { }}
+            <button class="layui-btn layui-btn-normal layui-btn-xs">生产中</button>
+            {{#  } else if(d.state == 6) { }}
+            <button class="layui-btn layui-btn-xs">已完成</button>
+            {{#  } }}
+        </script>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="deliveryDetailEven">详情</a>
+        </script>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table','miniPage','element','laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate,
+            miniPage = layui.miniPage;
+        // alert("已加载")
+
+        //表格设置
+        table.render({
+            elem: '#adminTableId',
+            url: '[[${adminDeliveryTableIdUrl}]]',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [
+                [
+                    {type: "checkbox", width: 50},
+                    {field: 'id', width: 200, title: '申请单号', sort: true},
+                    {field: 'applyEmployeeId', width: 200, title: '申请人编号', sort: true},
+                    {field: 'dateline', width: 200, title: '生产日期'},
+                    {field: 'date', width: 200, title: '申请日期', sort: true},
+                    {field: 'state', title:'审核状态', templet: '#buttonTpl', minWidth: 80, align: 'center'},
+                    {field: 'state1', title: '操作', minWidth: 150, toolbar: '#currentTableBar ', align: "center"}
+                ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line',
+            method:'post'
+        });
+
+        // 总搜索监听按钮
+        form.on('submit(admin-search-btn)', function (data) {
+
+            var seachIndex = layer.msg('查询中，请稍候...',{icon: 16,time:false,shade:0});
+            setTimeout(function(){
+
+                //执行搜索重载
+                table.reload('adminTableId', {
+                    url: '[[${adminDeliverySearchDir}]]'
+                    , page: {
+                        curr: 1
+                    }
+                    , where: {
+                        applyId : data.field.applyId,
+                        appliedId : data.field.appliedId,
+                        deliverymanId : data.field.deliverymanId,
+                        applyState : data.field.applyState,
+                        dateStart : data.field.dateStart,
+                        dateEnd : data.field.dateEnd,
+                        datelineStart : data.field.datelineStart,
+                        datelineEnd : data.field.datelineEnd,
+                    }
+                },'data');
+
+                layer.close(seachIndex);
+
+            },800);
+            return false;
+        });
+
+        /**
+         * toolbar事件监听
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if(obj.event === 'search'){
+                var flag = document.getElementById("searchBurId").hidden;
+                document.getElementById("searchBurId").hidden = !flag ;
+                // document.getElementById("searchBurId").removeAttribute("hidden");
+                return false;
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        //监听表格的工具
+        table.on('tool(currentTableFilter)', function (obj) {
+            if (obj.event === 'deliveryDetailEven') {
+                var content = miniPage.getHrefContent('[[${adminDeliveryDetailDir}]]'+'?id='+obj.data.id);
+                var openWH = miniPage.getOpenWidthHeight();
+
+                var index = layer.open({
+                    title: '申请表配送单',
+                    type: 1,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: [openWH[0] + 'px', openWH[1] + 'px'],
+                    offset: [openWH[2] + 'px', openWH[3] + 'px'],
+                    content: content,
+                });
+
+                //监听配送单完成
+                form.on('submit(finishBtn)', function (data) {
+                    $.ajax({
+                        url:'[[${adminDeliveryFinishBtnDir}]]',
+                        type:'post',
+                        data:JSON.stringify(data.field),
+                        contentType : "application/json",
+                        beforeSend:function () {
+                            this.layerIndex = layer.load(0, { shade: [0.5, '#393D49'] });
+                        },
+                        success:function(data){
+                            if(data.code == 404){//失败
+                                layer.msg("提交失败", {
+                                    icon: 5,//失败的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                return;
+                            }else{
+                                layer.msg("提交成功", {//成功
+                                    icon: 6,//成功的表情
+                                    time: 1000 //1秒关闭（如果不配置，默认是3秒）
+                                });
+                                layer.close(index);
+                                obj.del();
+                                table.reload('adminTableId');
+                            }
+                        },
+                        error:function (data) {
+                            alert("提交失败")
+                        },
+                        complete: function () {
+                            layer.close(this.layerIndex);
+                        },
+                    });
+                    layer.closeAll();
+                    table.reload('adminTableId');
+                    return false;
+                });
+
+                return false;
+
+            }
+        });
+
+
+
+
+    });
+</script>

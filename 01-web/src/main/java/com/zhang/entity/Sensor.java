@@ -3,6 +3,7 @@ package com.zhang.entity;
 import javax.persistence.*;
 import javax.swing.*;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 @Entity

@@ -23,4 +23,6 @@ public interface RequisitionImpl extends JpaRepository<Requisition,Integer> {
 
 
     Requisition findByDistribution(Distribution distribution);
+
+    List<Requisition> findByStateBetween(Integer start, Integer end);
 }

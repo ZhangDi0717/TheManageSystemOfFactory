@@ -1,0 +1,39 @@
+body{
+    position: relative;
+    font-family: "Microsoft YaHei UI";
+    /*background-color: #000000;*/
+}
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+ul,li{
+    list-style: none;
+}
+.clear:after{
+    display: block;
+    content: "";
+    clear:both;
+}
+#chart{
+    width: 99%;
+    height: 80%;
+}
+#timeSpan{
+    margin-top: 2%;
+}
+#timeSpan>li{
+    float: left;
+    width: 100px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: #95BB2F;
+    text-align: center;
+    cursor: pointer;
+    margin-left: 50px;
+}
+.juzhong {
+    margin: 0 auto;
+    width: 60%;
+}

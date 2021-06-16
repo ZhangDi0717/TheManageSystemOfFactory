@@ -99,12 +99,12 @@ public class JdbcUserDetailsService implements UserDetailsService {
                 LoginResult loginResult = new LoginResult();
                 loginResult.setCode(200);
 //                loginResult.setMsg("/adminpage?username="+username);
-                loginResult.setMsg("/admin/homepage");
+                loginResult.setMsg("/admin/index");
                 successHandler.setLoginResult(loginResult);
             }else if( grantedAuthority.getAuthority().equals("ROLE_APPLY") ){
                 LoginResult loginResult = new LoginResult();
                 loginResult.setCode(200);
-                loginResult.setMsg("/applypage?username="+username);
+                loginResult.setMsg("/apply/index");
                 successHandler.setLoginResult(loginResult);
             }
         }

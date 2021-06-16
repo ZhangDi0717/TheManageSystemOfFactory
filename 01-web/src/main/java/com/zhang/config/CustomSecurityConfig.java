@@ -55,17 +55,32 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         System.out.println("=================configure HttpSecurity =========");
         http.authorizeRequests()
-//                .antMatchers("/index","/login","/api/**","/css/**","/font/**","/images/**","/img/**","/js/**","/layui-v2.6.5/**","/lib/**","/page/**","/captcha/**").permitAll()//设置访问的白名单
-//                .antMatchers("/adminpage/**").hasRole("ADMIN")
-//                .antMatchers("/applypage/**").hasRole("APPLY")
-//                .anyRequest().authenticated()
+                .antMatchers("/mylogin",
+                        "/login",
+                        "/api/**",
+                        "/css/**",
+                        "/font/**",
+                        "/images/**",
+                        "/img/**",
+                        "/js/**",
+                        "/layui-v2.6.5/**",
+                        "/lib/**",
+                        "/captcha/**",
+                        "/signout/success").permitAll()//设置访问的白名单
+                .antMatchers("/page/admin/**").hasRole("ADMIN")
+                .antMatchers("/page/apply/**").hasRole("APPLY")
+//                .anyRequest().authenticated()//正式使用
                 .anyRequest().permitAll()//测试
                 .and()
                 .formLogin()
                 .successHandler(successHandler)
                 .failureHandler(failureHandler)
-                .loginPage("/index")//自定义登陆界面
+                .loginPage("/mylogin")//自定义登陆界面
                 .loginProcessingUrl("/login")//登陆表单提交界面
+                .and()
+                .logout()
+                .logoutUrl("/signout") // 退出登录的url
+                .logoutSuccessUrl("/mylogin") // 退出登录成功跳转的url
                 .and()
                 .csrf().disable();//跨域
 

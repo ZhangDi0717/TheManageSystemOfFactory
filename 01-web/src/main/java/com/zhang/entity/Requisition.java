@@ -14,6 +14,8 @@ public class Requisition {
 
     private Integer state;
 
+    private String massage;
+
     private Date date;
 
     private Date dateline;
@@ -27,6 +29,22 @@ public class Requisition {
         this.dateline = dateline;
         this.employee = employee;
         this.distribution = distribution;
+    }
+
+    public Requisition(Integer id, Integer state, String massage, Date date, Date dateline) {
+        this.id = id;
+        this.state = state;
+        this.massage = massage;
+        this.date = date;
+        this.dateline = dateline;
+    }
+
+    public String getMassage() {
+        return massage;
+    }
+
+    public void setMassage(String massage) {
+        this.massage = massage;
     }
 
     public Integer getId() {
