@@ -4,3 +4,11 @@ ROLE_ADMIN  :   首页                    /admin/homepage
                 权限管理                 /admin/permission/manage
 
 ROLE_APPLY  :  /apply/homepage
+
+
+
+登陆界面         mylogin         登陆
+首页            index           首页界面
+界面初始化       ***init         json
+申请单表格       apply/table     请求数据表格
+

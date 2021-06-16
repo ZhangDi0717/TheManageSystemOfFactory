@@ -222,7 +222,7 @@
         //表格设置
         table.render({
             elem: '#adminTableId',
-            url: '[[${adminTableIdUrl}]]',
+            url: '[[${applyTableIdUrl}]]',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -267,7 +267,7 @@
 
                 //执行搜索重载
                 table.reload('adminTableId', {
-                    url: '[[${adminSearchDir}]]'
+                    url: '[[${applySearchDir}]]'
                     , page: {
                         curr: 1
                     }
@@ -294,7 +294,7 @@
          */
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {   // 监听添加操作
-                var content = miniPage.getHrefContent('[[${adminApplyAddDir}]]');
+                var content = miniPage.getHrefContent('[[${applyAddDir}]]');
                 var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
@@ -313,7 +313,7 @@
                 form.on('submit(save)', function (data) {
 
                     $.ajax({
-                        url:'[[${adminApplySaveDir}]]',
+                        url:'[[${applySaveDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",
@@ -367,7 +367,7 @@
                 //监听提交
                 form.on('submit(saveBtn)', function (data) {
                     $.ajax({
-                        url:'[[${adminApplySubmitDir}]]',
+                        url:'[[${applySubmitDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",
@@ -421,7 +421,7 @@
                     var checkStatus = table.checkStatus('adminTableId')
                         , data = checkStatus.data;
                     $.ajax({
-                        url:'[[${adminApplyDeleteDir}]]',
+                        url:'[[${applyDeleteDir}]]',
                         type:'post',
                         data:JSON.stringify(data),
                         contentType : "application/json",
@@ -473,7 +473,7 @@
         //监听表格的工具
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'edit') {
-                var content = miniPage.getHrefContent('[[${adminApplyEitDir}]]'+'?id='+obj.data.id);
+                var content = miniPage.getHrefContent('[[${applyEitDir}]]'+'?id='+obj.data.id);
                 var openWH = miniPage.getOpenWidthHeight();
                 var index = layer.open({
                     title: '编辑申请单信息',
@@ -597,7 +597,7 @@
 
                 return false;
             }else if (obj.event === 'detail') {
-                var content = miniPage.getHrefContent('[[${adminApplyDetailDir}]]'+'?id='+obj.data.id);
+                var content = miniPage.getHrefContent('[[${applyDetailDir}]]'+'?id='+obj.data.id);
                 var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
@@ -616,7 +616,7 @@
                 form.on('submit(changeBtn)', function (data) {
                     console.log(data.field);
                     $.ajax({
-                        url:'[[${adminApplyChangeDir}]]',
+                        url:'[[${applyChangeDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",

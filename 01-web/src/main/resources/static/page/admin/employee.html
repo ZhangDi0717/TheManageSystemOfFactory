@@ -96,7 +96,7 @@
         //表格设置
         table.render({
             elem: '#employeeTableId',
-            url: '[[${adminEmployeeTableDir}]]',
+            url: '[[${employeeTableDir}]]',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -132,7 +132,7 @@
 
                 //执行搜索重载
                 table.reload('employeeTableId', {
-                    url: '[[${adminEmployeeSearchDir}]]'
+                    url: '[[${employeeSearchDir}]]'
                     , page: {
                         curr: 1
                     }
@@ -157,7 +157,7 @@
          */
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {   // 监听添加操作
-                var content = miniPage.getHrefContent('[[${adminAddEmployeeDir}]]');
+                var content = miniPage.getHrefContent('[[${employeeAddDir}]]');
                 var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
@@ -211,7 +211,7 @@
                         layer.close(index);
                         //向服务端发送删除指令
                         $.ajax({
-                            url:'[[${adminEmployeeDeleteMoreDir}]]',
+                            url:'[[${employeeDeleteDir}]]',
                             type:'post',
                             data:JSON.stringify(data),
                             contentType : "application/json",
@@ -269,7 +269,7 @@
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'detail') {
                 console.log(obj.data.employeeId)
-                var content = miniPage.getHrefContent('[[${adminEmployeeDetailDir}]]?employeeId='+obj.data.employeeId);
+                var content = miniPage.getHrefContent('[[${employeeDetailDir}]]?employeeId='+obj.data.employeeId);
                 var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
@@ -298,7 +298,7 @@
                     layer.close(index);
                     //向服务端发送删除指令
                     $.ajax({
-                        url:'[[${adminEmployeeDeleteOneDir}]]',
+                        url:'[[${employeeDeleteOneDir}]]',
                         type:'post',
                         data:JSON.stringify(obj.data),
                         contentType : "application/json",

@@ -141,7 +141,7 @@
         //表格设置
         table.render({
             elem: '#adminTableId',
-            url: '[[${adminDeliveryTableIdUrl}]]',
+            url: '[[${deliveryTableIdUrl}]]',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -174,7 +174,7 @@
 
                 //执行搜索重载
                 table.reload('adminTableId', {
-                    url: '[[${adminDeliverySearchDir}]]'
+                    url: '[[${deliverySearchDir}]]'
                     , page: {
                         curr: 1
                     }
@@ -216,7 +216,7 @@
         //监听表格的工具
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'deliveryDetailEven') {
-                var content = miniPage.getHrefContent('[[${adminDeliveryDetailDir}]]'+'?id='+obj.data.id);
+                var content = miniPage.getHrefContent('[[${deliveryDetailDir}]]'+'?id='+obj.data.id);
                 var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
@@ -233,7 +233,7 @@
                 //监听配送单完成
                 form.on('submit(finishBtn)', function (data) {
                     $.ajax({
-                        url:'[[${adminDeliveryFinishBtnDir}]]',
+                        url:'[[${deliveryFinishBtnDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",

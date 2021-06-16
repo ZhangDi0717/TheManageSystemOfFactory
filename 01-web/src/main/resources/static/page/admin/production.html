@@ -32,7 +32,7 @@
                         <div class="layui-card">
                             <div class="layui-card-header"><i class="fa fa-credit-card icon icon-blue"></i>车间1</div>
                             <div class="layui-card-body" id="chart1HAW" style="height: 100%">
-                                <div id="chart1" style="height: 100%; margin: 0;min-width: 600px;min-height: 280px"></div>
+                                <div id="chart1" style="height: 100%; margin: 0;min-height: 280px"></div>
                             </div>
                         </div>
                     </div>
@@ -516,8 +516,6 @@
             });
 
             function refresh() {
-
-
                 $.ajax({
                     url:'/production/pushData?id=1',
                     type:'post',

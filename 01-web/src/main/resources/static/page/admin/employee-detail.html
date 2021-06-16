@@ -263,7 +263,7 @@
                 //向服务端发送删除指令
                 //向后台请求数据
                 $.ajax({
-                    url: '[[${adminEmployeeChangeBasicDir}]]',
+                    url: '[[${employeeChangeBasicDir}]]',
                     type: 'post',
                     data: JSON.stringify(data.field),
                     contentType:'application/json',
@@ -322,7 +322,7 @@
                 layer.close(index);
                 //向后台请求数据
                 $.ajax({
-                    url: '[[${adminEmployeeChangeMainDir}]]',
+                    url: '[[${employeeChangeMainDir}]]',
                     type: 'post',
                     data: JSON.stringify(data.field),
                     contentType:'application/json',

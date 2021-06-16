@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +31,29 @@ public class ProductionController {
 
     @Autowired
     private SensorDataImpl sensorDataimpl;
+
+
+
+
+    /**
+     * 请求地址 ： production/manage
+     *
+     *
+     *
+     * 生产参数的检测
+     * @return
+     */
+    @RequestMapping(value = "/production/manage")
+    private ModelAndView productionManage(){
+        System.out.println("go into productionManage");
+        ModelAndView mv = new ModelAndView();
+
+        mv.setViewName("static/page/admin/production");
+        return mv;
+    }
+
+
+
 
     /**
      * 获取传感器数据

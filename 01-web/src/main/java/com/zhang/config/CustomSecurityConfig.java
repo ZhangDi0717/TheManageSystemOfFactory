@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 
 /**
@@ -45,6 +46,9 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(new BCryptPasswordEncoder());//加密方法
     }
+
+
+
 
     /**
      * 登陆页面管理
@@ -83,6 +87,7 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/mylogin") // 退出登录成功跳转的url
                 .and()
                 .csrf().disable();//跨域
+//                .cors().and();
 
         //在过滤器链条中添加自定义的过滤器
         http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);

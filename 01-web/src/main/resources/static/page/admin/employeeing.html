@@ -45,8 +45,6 @@
                             <div>
                                 <form class="layui-form" style="margin: 0 auto;max-width: 460px;padding-top: 40px;" id="secondFormId">
 
-                                    <label>职员个人信息</label>
-
                                     <!--            姓名    必填-->
                                     <div class="layui-form-item">
                                         <!--                label-->
@@ -205,7 +203,7 @@
 
             //向后台请求数据
             $.ajax({
-                url: '[[${adminAddEmployeeStepFirDir}]]',
+                url: '[[${employeeAddStepFirDir}]]',
                 type: 'post',
                 data: JSON.stringify(data.field),
                 contentType:'application/json',
@@ -253,7 +251,7 @@
 
             //向后台请求数据
             $.ajax({
-                url: '[[${adminAddEmployeeStepSecDir}]]',
+                url: '[[${employeeAndStepSecDir}]]',
                 type: 'post',
                 data: JSON.stringify(data.field),
                 contentType:'application/json',

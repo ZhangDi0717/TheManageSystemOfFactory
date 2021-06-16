@@ -14,7 +14,17 @@ public class Position {
     @Column(nullable = false)
     private String name;
 
+    private String permit;
+
     private String suggest;
+
+    public String getPermit() {
+        return permit;
+    }
+
+    public void setPermit(String permit) {
+        this.permit = permit;
+    }
 
     public Long getId() {
         return id;

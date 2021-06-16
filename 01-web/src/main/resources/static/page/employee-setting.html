@@ -7,7 +7,7 @@
             <div class="layui-form-item">
                 <!--                label-->
                 <div class="layui-inline">
-                    <label class="layui-form-label">姓名</label>
+                    <label class="layui-form-label" style="right: 5px">姓名</label>
                     <div class="layui-input-inline" style="width: 100px;">
                         <input type="text" name="name" required lay-verify="required" placeholder="请输入姓名" autocomplete="off" class="layui-input" id="name" th:value="${employeeinformation.getName()}">
                     </div>
@@ -18,7 +18,7 @@
             <div class="layui-form-item">
 
                 <div class="layui-inline">
-                    <label class="layui-form-label">职位</label>
+                    <label class="layui-form-label" style="right: 5px">职位</label>
                     <div class="layui-input-inline" style="width: 100px;">
                         <select name="position" class="position" required lay-verify="required" id="position">
                             <option value=""></option>
@@ -30,7 +30,7 @@
             <!--            性别-->
             <div class="layui-form-item">
                 <div class="layui-inline" th:switch="${employeeinformation.getSex()}">
-                    <label class="layui-form-label">性别</label>
+                    <label class="layui-form-label" style="right: 5px">性别</label>
 
                     <div class="layui-input-block" th:case="0">
                         <input type="radio" name="sex" value="0" title="男" checked>
@@ -47,7 +47,7 @@
             <!--            电话-->
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">电话</label>
+                    <label class="layui-form-label" style="right: 5px">电话</label>
                     <div class="layui-input-inline" style="width: 200px;">
                         <input type="text" name="phone" placeholder="请输入电话号码" autocomplete="off" class="layui-input" id="phone" th:value="${employeeinformation.getPhone()}">
                     </div>
@@ -57,7 +57,7 @@
             <!--            邮箱-->
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">邮箱</label>
+                    <label class="layui-form-label" style="right: 5px">邮箱</label>
                     <div class="layui-input-inline" style="width: 200px;">
                         <input type="text" name="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" id="email" th:value="${employeeinformation.getEmail()}">
                     </div>
@@ -67,7 +67,7 @@
             <!--            地址-->
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <label class="layui-form-label">地址</label>
+                    <label class="layui-form-label" style="right: 5px">地址</label>
                     <div class="layui-input-inline" style="width: 200px;">
                         <input type="text" name="address" placeholder="请输入居住地址" autocomplete="off" class="layui-input" id="address" th:value="${employeeinformation.getAddress()}">
                     </div>
@@ -76,9 +76,9 @@
             <!--            {"msg":"个人信息请求成功","address":null,"code":200,"phone":null,"sex":null,"name":"原料申请员","email":null}-->
             <div class="layui-form-item">
                 <div class="layui-inline">
-                    <div class="layui-input-block">
+
                         <button class="layui-btn" lay-submit  lay-filter="saveinformation">保存</button>
-                    </div>
+
                 </div>
             </div>
         </form>

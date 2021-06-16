@@ -580,6 +580,7 @@ h2.method {
 
 .loginBody {
     background: url("../images/bg1.jpg") no-repeat center center;
+    background-size: cover;
 }
 
 .loginBody form.layui-form {

@@ -216,7 +216,7 @@
         //表格设置
         table.render({
             elem: '#adminTableId',
-            url: '[[${adminApprovalTableIdUrl}]]',
+            url: '[[${approvalTableIdUrl}]]',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -257,7 +257,7 @@
 
                 //执行搜索重载
                 table.reload('adminTableId', {
-                    url: '[[${adminApprovalSearchDir}]]'
+                    url: '[[${approvalSearchDir}]]'
                     , page: {
                         curr: 1
                     }
@@ -299,7 +299,7 @@
         //监听表格的工具
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'approving') {
-                var content = miniPage.getHrefContent('[[${adminApplyApprovingDir}]]'+'?id='+obj.data.id);
+                var content = miniPage.getHrefContent('[[${approvalApprovingDir}]]'+'?id='+obj.data.id);
                 var openWH = miniPage.getOpenWidthHeight();
 
                 var index = layer.open({
@@ -323,7 +323,7 @@
                 form.on('submit(approvingBtn)', function (data) {
                     console.log(data.field);
                     $.ajax({
-                        url:'[[${adminApplyApprovingBtnDir}]]',
+                        url:'[[${approvalApprovingBtnDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",
@@ -363,7 +363,7 @@
                 form.on('submit(approvingErrorBtn)', function (data) {
                     console.log(data.field);
                     $.ajax({
-                        url:'[[${adminApplyApprovingErrorBtnDir}]]',
+                        url:'[[${approvalApprovingErrorBtnDir}]]',
                         type:'post',
                         data:JSON.stringify(data.field),
                         contentType : "application/json",
